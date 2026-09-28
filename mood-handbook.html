@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ddd4c6" />
+  <title>今天的心情</title>
+  <style>
+    :root {
+      --paper: #f8f3e9;
+      --ink: #302c27;
+      --muted: #6d6256;
+      --rule: #d9cfc0;
+      --red-rule: rgba(194, 105, 78, .42);
+      --accent: #9b432f;
+      --shadow: rgba(55, 43, 31, .16);
+      --serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+      --sans: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: #ddd4c6; }
+    body { margin: 0; min-width: 320px; color: var(--ink); font-family: var(--sans); background: radial-gradient(circle at 18% 8%, rgba(255,255,255,.36), transparent 22rem), #ddd4c6; }
+    button, textarea { font: inherit; }
+    button, .mood label { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    .notebook { position: relative; width: min(100%, 430px); min-height: 100svh; margin: 0 auto; overflow: hidden; background: var(--paper); box-shadow: 0 0 40px var(--shadow); }
+    .notebook::before { content: ""; position: absolute; z-index: 2; top: 0; bottom: 0; left: 35px; border-left: 1px solid var(--red-rule); pointer-events: none; }
+    .notebook::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: .19; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E"); mix-blend-mode: multiply; }
+    .sheet { position: relative; z-index: 1; min-height: 100svh; padding: calc(24px + env(safe-area-inset-top)) 24px calc(26px + env(safe-area-inset-bottom)) 58px; display: flex; flex-direction: column; }
+    .topline { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--rule); color: var(--muted); font-size: 12px; letter-spacing: .08em; }
+    .topline span:last-child { color: var(--accent); }
+    .view { display: none; flex: 1; flex-direction: column; animation: appear .34s ease both; }
+    .view.active { display: flex; }
+    @keyframes appear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+    .entry-head { padding: 40px 0 25px; }
+    h1, h2, h3, p { margin: 0; }
+    h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -.08em; }
+    h1 { font-size: clamp(39px, 11vw, 54px); line-height: 1.12; }
+    .subline { margin-top: 14px; color: var(--muted); font-size: 13px; }
+
+    .moods { display: grid; min-inline-size: 0; margin: 0; padding: 0; border: 0; border-top: 1px solid var(--rule); }
+    .mood { position: relative; border-bottom: 1px solid var(--rule); }
+    .mood input { position: absolute; opacity: 0; pointer-events: none; }
+    .mood label { display: flex; align-items: center; gap: 13px; min-height: 51px; padding: 6px 10px 6px 2px; cursor: pointer; transition: background .18s, padding-left .18s; }
+    .mood label:active { padding-left: 6px; }
+    .mood input:checked + label { background: color-mix(in srgb, var(--mood) 9%, transparent); padding-left: 8px; }
+    .mood input:focus-visible + label { outline: 2px solid var(--mood); outline-offset: -2px; }
+    .mood-mark { width: 14px; height: 14px; flex: 0 0 14px; border: 1px solid var(--mood); background: transparent; }
+    .mood input:checked + label .mood-mark { background: var(--mood); box-shadow: inset 0 0 0 3px var(--paper); }
+    .mood-title { font-size: 15px; font-weight: 700; }
+    .mood-desc { margin-left: 8px; color: var(--muted); font-size: 12px; }
+
+    .note-area { margin-top: 26px; }
+    .note-label { display: block; margin-bottom: 9px; color: var(--accent); font-family: var(--serif); font-size: 15px; }
+    .writing-lines { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); background: repeating-linear-gradient(to bottom, transparent 0 31px, rgba(166,145,119,.25) 32px, transparent 33px); }
+    textarea { display: block; width: 100%; min-height: 112px; padding: 10px 8px 0 12px; border: 0; outline: 0; resize: none; color: var(--ink); background: transparent; font-family: var(--serif); font-size: 16px; line-height: 32px; }
+    textarea::placeholder { color: #74695e; }
+    .note-meta { display: flex; justify-content: flex-end; padding-top: 7px; color: var(--muted); font-size: 11px; }
+    .entry-actions { margin-top: auto; padding-top: 25px; }
+    .primary, .secondary { width: 100%; min-height: 50px; border: 0; cursor: pointer; transition: transform .18s, background .18s; }
+    .primary { color: #fffaf2; background: var(--ink); font-weight: 700; letter-spacing: .08em; }
+    .primary:hover { background: #4c4339; }
+    .primary:active, .secondary:active { transform: scale(.985); }
+    .secondary { color: var(--ink); border: 1px solid var(--rule); background: transparent; font-weight: 700; }
+    .action-note { min-height: 18px; margin: 0 0 8px; color: var(--accent); font-size: 12px; text-align: center; }
+
+    .result-head { padding: 39px 0 23px; }
+    .result-head h2 { font-size: 31px; }
+    .result-head p { margin-top: 10px; color: var(--muted); font-size: 13px; }
+    .share-card { --card-accent: #b75e43; --card-label: #8e3c2b; --card-line: rgba(183,94,67,.42); --card-ring: rgba(183,94,67,.10); --card-wash: #f0d8cd; position: relative; min-height: 338px; padding: 25px 21px 22px; overflow: hidden; background: var(--card-wash); border: 1px solid var(--card-line); }
+    .share-card::before { content: ""; position: absolute; top: 0; bottom: 0; left: 27px; border-left: 1px solid var(--card-line); }
+    .share-card::after { content: ""; position: absolute; top: 0; right: -26px; width: 138px; height: 138px; border: 1px solid var(--card-line); border-radius: 50%; box-shadow: 0 0 0 18px var(--card-ring); }
+    .card-rule { width: 38px; height: 4px; background: var(--card-accent); }
+    .card-label { margin-top: 40px; color: var(--card-label); font-size: 12px; letter-spacing: .1em; }
+    .card-title { margin-top: 11px; font-size: 29px; line-height: 1.3; }
+    .card-copy { max-width: 260px; margin-top: 17px; font-family: var(--serif); font-size: 16px; line-height: 1.85; }
+    .card-note { max-width: 265px; margin-top: 16px; color: #6f5d4d; font-size: 12px; line-height: 1.6; }
+    .card-footer { position: absolute; right: 21px; bottom: 20px; left: 21px; display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--card-line); color: #5f4d3e; font-size: 11px; }
+    @supports (color: color-mix(in srgb, #000 50%, transparent)) {
+      .share-card { border-color: color-mix(in srgb, var(--card-accent) 42%, transparent); }
+      .share-card::before, .share-card::after { border-color: color-mix(in srgb, var(--card-accent) 42%, transparent); }
+      .share-card::after { box-shadow: 0 0 0 18px color-mix(in srgb, var(--card-accent) 10%, transparent); }
+      .card-footer { border-top-color: color-mix(in srgb, var(--card-accent) 38%, transparent); }
+    }
+    .result-actions { display: grid; gap: 9px; margin-top: 14px; }
+    .share-hint { min-height: 18px; margin-top: 9px; color: var(--accent); font-size: 12px; text-align: center; }
+    .back-link { align-self: flex-start; margin-top: 15px; padding: 4px 0; border: 0; color: var(--muted); background: transparent; font-size: 12px; cursor: pointer; }
+    @media (min-width: 431px) { .notebook { min-height: 780px; margin: 24px auto; } .sheet { min-height: 780px; } }
+  </style>
+</head>
+<body>
+  <main class="notebook" aria-label="今天的心情">
+    <div class="sheet">
+      <header class="topline"><span id="todayLine"></span><span id="pageLabel">今日</span></header>
+      <section class="view active" id="entryView" aria-labelledby="entryTitle">
+        <div class="entry-head"><h1 id="entryTitle">今天的心情</h1><p class="subline">选一个最接近的</p></div>
+        <fieldset class="moods" id="moodList" aria-label="选择今天的心情"></fieldset>
+        <div class="note-area"><label class="note-label" for="noteInput">记一笔（可选）</label><div class="writing-lines"><textarea id="noteInput" name="note" autocomplete="off" maxlength="48" placeholder="例如：忙了一天，终于坐下来…"></textarea></div><div class="note-meta"><span id="noteCount">0</span> / 48</div></div>
+        <div class="entry-actions"><div class="action-note" id="moodError" aria-live="polite"></div><button class="primary" id="generateButton" type="button">生成小卡片</button></div>
+      </section>
+      <section class="view" id="resultView" aria-labelledby="resultTitle">
+        <div class="result-head"><h2 id="resultTitle">今天的这一页</h2><p>收好这一刻，之后再打开。</p></div>
+        <article class="share-card" id="shareCard"><div class="card-rule"></div><div class="card-label" id="cardLabel">今日情绪</div><h3 class="card-title" id="cardTitle">有点乱，也在整理</h3><p class="card-copy" id="cardCopy"></p><p class="card-note" id="cardNote"></p><footer class="card-footer"><span>今天的心情</span><span id="cardDate"></span></footer></article>
+        <div class="result-actions"><button class="primary" id="saveButton" type="button">保存或分享小卡片</button><button class="secondary" id="restartButton" type="button">再写一页</button></div>
+        <div class="share-hint" id="shareHint" aria-live="polite"></div><button class="back-link" id="backButton" type="button">返回修改</button>
+      </section>
+    </div>
+  </main>
+  <script>
+    const moods = [
+      { id: 'sunny', label: '亮了一点', desc: '有些事在往好的方向走', color: '#d59b3e', ink: '#7a500b', line: 'rgba(213,155,62,.42)', ring: 'rgba(213,155,62,.10)', wash: '#f5e7bd', title: '亮了一点', copy: '把这点轻快留给自己。今天适合做一件想做很久、但一直没开始的小事。', action: '给自己一个小小的开始。' },
+      { id: 'tangled', label: '有点乱', desc: '事情还没排好队', color: '#b75e43', ink: '#813522', line: 'rgba(183,94,67,.42)', ring: 'rgba(183,94,67,.10)', wash: '#f0d8cd', title: '有点乱，也在整理', copy: '不必一次把所有事情想清楚。先做眼前最小的一件，思绪会慢慢找到顺序。', action: '先写下现在最要紧的一件。' },
+      { id: 'low', label: '电量低', desc: '想把力气省下来', color: '#788b86', ink: '#3f5d55', line: 'rgba(120,139,134,.42)', ring: 'rgba(120,139,134,.10)', wash: '#dce6e1', title: '今天先省一点力', copy: '不是每一天都需要全力以赴。把必须做的做完，剩下的交给明天。', action: '允许自己早点停下来。' },
+      { id: 'quiet', label: '想安静', desc: '不太想解释和回应', color: '#65778b', ink: '#354e67', line: 'rgba(101,119,139,.42)', ring: 'rgba(101,119,139,.10)', wash: '#dce4ec', title: '安静也算一种回答', copy: '把声音调小一点，留出一段不必回应任何人的时间。', action: '给自己留半小时的空白。' },
+      { id: 'recovering', label: '正在恢复', desc: '还没完全好，但在往前走', color: '#9a7860', ink: '#5d4533', line: 'rgba(154,120,96,.42)', ring: 'rgba(154,120,96,.10)', wash: '#eadfd4', title: '慢慢回到自己的位置', copy: '不用急着恢复成原来的样子。今天能照顾好自己，就已经是在向前。', action: '做一件让身体舒服的事。' }
+    ];
+    const state = { mood: null, note: '' }; let restartArmed = false; const today = new Date(); const dateText = new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }).format(today);
+    document.getElementById('todayLine').textContent = dateText; document.getElementById('cardDate').textContent = dateText;
+    function showView(id) { document.querySelectorAll('.view').forEach((view) => view.classList.toggle('active', view.id === id)); document.getElementById('pageLabel').textContent = id === 'entryView' ? '今日' : '小卡'; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    function renderMoods() { document.getElementById('moodList').innerHTML = moods.map((mood) => `<div class="mood" style="--mood:${mood.color}"><input id="mood-${mood.id}" name="mood" type="radio" value="${mood.id}" /><label for="mood-${mood.id}"><span class="mood-mark" aria-hidden="true"></span><span class="mood-title">${mood.label}</span><span class="mood-desc">${mood.desc}</span></label></div>`).join(''); document.querySelectorAll('input[name="mood"]').forEach((input) => input.addEventListener('change', () => { state.mood = moods.find((mood) => mood.id === input.value); })); }
+    function renderResult() { const mood = state.mood; const card = document.getElementById('shareCard'); card.style.setProperty('--card-accent', mood.color); card.style.setProperty('--card-label', mood.ink); card.style.setProperty('--card-line', mood.line); card.style.setProperty('--card-ring', mood.ring); card.style.setProperty('--card-wash', mood.wash); document.getElementById('cardLabel').textContent = `今日情绪 · ${mood.label}`; document.getElementById('cardTitle').textContent = mood.title; document.getElementById('cardCopy').textContent = mood.copy; document.getElementById('cardNote').textContent = state.note ? `「${state.note}」` : mood.action; }
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight, color, font) { ctx.fillStyle = color; ctx.font = font; let line = ''; let count = 0; for (const char of text) { const test = line + char; if (ctx.measureText(test).width > maxWidth && line) { ctx.fillText(line, x, y + count * lineHeight); count++; line = char; } else line = test; } if (line) { ctx.fillText(line, x, y + count * lineHeight); count++; } return count; }
+    function cardToPng() {
+      const mood = state.mood; const scale = 2; const canvas = document.createElement('canvas');
+      canvas.width = 720 * scale; canvas.height = 680 * scale;
+      const ctx = canvas.getContext('2d'); if (!ctx) throw new Error('Canvas unavailable');
+      ctx.scale(scale, scale); ctx.fillStyle = mood.wash; ctx.fillRect(0, 0, 720, 680);
+      ctx.strokeStyle = mood.color; ctx.globalAlpha = .45; ctx.lineWidth = 2; ctx.strokeRect(1, 1, 718, 678); ctx.globalAlpha = 1;
+      ctx.beginPath(); ctx.moveTo(55, 0); ctx.lineTo(55, 680); ctx.stroke();
+      ctx.save(); ctx.strokeStyle = mood.color; ctx.globalAlpha = .10; ctx.lineWidth = 36; ctx.beginPath(); ctx.arc(630, 143, 143, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = .42; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(630, 143, 143, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      ctx.fillStyle = mood.color; ctx.fillRect(83, 46, 76, 7); ctx.fillStyle = mood.ink; ctx.font = '22px sans-serif'; ctx.fillText(`今日情绪 · ${mood.label}`, 83, 140);
+      ctx.fillStyle = '#302c27'; ctx.font = '600 50px serif'; ctx.fillText(mood.title, 83, 201);
+      const lines = wrapText(ctx, mood.copy, 83, 264, 525, 48, '#302c27', '27px serif');
+      wrapText(ctx, state.note ? `「${state.note}」` : mood.action, 83, 264 + lines * 48 + 24, 530, 33, '#5f4d3e', '18px sans-serif');
+      ctx.globalAlpha = .42; ctx.beginPath(); ctx.moveTo(83, 628); ctx.lineTo(665, 628); ctx.stroke(); ctx.globalAlpha = 1; ctx.fillStyle = '#5f4d3e'; ctx.font = '17px sans-serif'; ctx.fillText('今天的心情', 83, 658); ctx.fillText(dateText, 557, 658);
+      return canvas.toDataURL('image/png');
+    }
+    renderMoods();
+    document.getElementById('noteInput').addEventListener('input', (event) => { state.note = event.target.value.trim(); document.getElementById('noteCount').textContent = event.target.value.length; });
+    document.getElementById('generateButton').addEventListener('click', () => {
+      if (!state.mood) { document.getElementById('moodError').textContent = '先选一个心情'; document.querySelector('input[name="mood"]').focus(); return; }
+      restartArmed = false; document.getElementById('restartButton').textContent = '再写一页'; document.getElementById('shareHint').textContent = ''; document.getElementById('moodError').textContent = ''; renderResult(); showView('resultView');
+    });
+    document.getElementById('restartButton').addEventListener('click', () => {
+      const hint = document.getElementById('shareHint'); const button = document.getElementById('restartButton');
+      if (state.note && !restartArmed) { restartArmed = true; button.textContent = '确认清空，重新记录'; hint.textContent = '本页记录会被清空'; return; }
+      restartArmed = false; state.mood = null; state.note = ''; document.getElementById('noteInput').value = ''; document.getElementById('noteCount').textContent = '0'; document.querySelectorAll('input[name="mood"]').forEach((input) => { input.checked = false; }); button.textContent = '再写一页'; hint.textContent = ''; showView('entryView');
+    });
+    document.getElementById('backButton').addEventListener('click', () => { restartArmed = false; document.getElementById('restartButton').textContent = '再写一页'; document.getElementById('shareHint').textContent = ''; showView('entryView'); });
+    document.getElementById('saveButton').addEventListener('click', async () => {
+      const hint = document.getElementById('shareHint');
+      try {
+        const dataUrl = cardToPng(); const blob = await (await fetch(dataUrl)).blob(); const file = new File([blob], '今天的心情.png', { type: 'image/png' });
+        try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: '今天的心情' }); hint.textContent = '小卡片已准备好'; return; } } catch (error) { if (error.name === 'AbortError') return; }
+        const link = document.createElement('a'); link.download = '今天的心情.png'; link.href = dataUrl; link.click(); hint.textContent = '小卡片已保存到下载目录';
+      } catch (error) { hint.textContent = '暂时无法生成图片，请稍后重试'; }
+    });
+  </script>
+</body>
+</html>
