@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "title": "待命名工具",
+  "revision": "draft-1",
+  "brief": {
+    "status": "draft",
+    "confirmation_evidence": "",
+    "target_user": "",
+    "scenario": "",
+    "goal": "",
+    "non_goals": [],
+    "offline": true,
+    "blocking_questions": ["确认核心结果、页面框架与视觉方向"]
+  },
+  "pages": [],
+  "requirements": [],
+  "interactions": [],
+  "logic": [],
+  "visual": {
+    "direction": "",
+    "tokens": {},
+    "motion": "",
+    "assets": [],
+    "design_plan": {
+      "route": "undecided",
+      "intent": "",
+      "reference_basis": "",
+      "anchors": [],
+      "techniques": [],
+      "acceptance": []
+    },
+    "review": {
+      "status": "not_reviewed",
+      "level": "not_run",
+      "evidence_ids": [],
+      "findings": []
+    }
+  },
+  "evidence": [],
+  "assumptions": [],
+  "limitations": [],
+  "changes": []
+}

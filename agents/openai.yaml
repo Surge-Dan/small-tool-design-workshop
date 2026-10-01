@@ -1,8 +1,8 @@
 interface:
   display_name: "小工具设计工坊"
-  short_description: "为小红书场景设计主题化移动端小工具与可点击原型输出"
+  short_description: "按视觉SOP制作简约或复杂的高保真小工具原型并导出AI开发参考包"
   brand_color: "#B75E43"
-  default_prompt: "使用 $small-tool-design-workshop 先与我确认页面框架和视觉方向，再生成高保真的移动端可交互原型。"
+  default_prompt: "使用 $small-tool-design-workshop 先确认需求与视觉方向，按视觉SOP制作高保真交互原型，检查实际画面并导出AI开发参考包。"
 
 policy:
   allow_implicit_invocation: true
