@@ -34,7 +34,7 @@ python scripts/build_handoff.py init --output <项目目录>/design-spec.json --
 | `requirements[]` | 唯一ID、描述、关联页面、可观察验收句；实现状态planned／partial／implemented；验证级别not_run／static／browser／device及证据ID |
 | `interactions[]` | 唯一ID、触发、前后状态、条件、反馈与保留的数据；状态可在同一页面，不要求独立页 |
 | `logic[]` | 输入、具体规则、可检查的例子、是否模拟；无业务规则的展示工具可为空 |
-| `visual` | 方向、实际采用的设计参数、动效说明及资产来源／许可／用途／是否内嵌；可附design_plan与review，不可只写“高级” |
+| `visual` | 方向、实际采用的设计参数、动效说明及资产来源／许可／用途／是否内嵌；可附design_plan、motion_plan与review，不可只写“高级” |
 | `evidence[]` | 唯一ID、类型、具体观察、涉及状态；可附当前项目下的PNG／JPEG／WebP截图或文本日志相对路径 |
 | `assumptions`、`limitations` | 已说明的默认值、缺少的能力／验证、已知问题；缺截图或断网验证由脚本另行提示 |
 | `revision`、`changes` | 可选，当前版本和本次变动；修改后同步记录，不保留过期证据 |
@@ -54,6 +54,23 @@ python scripts/build_handoff.py init --output <项目目录>/design-spec.json --
 - `review.findings[]`：唯一`id`、`severity`为blocker／major／minor、`location`、`state_ids`、`observation`、`action`、`status`为open／fixed／accepted。accepted须有`acceptance_evidence`记录用户明确接受依据，不能自行批准偏离用户方向。
 
 存在未修复blocker或未处理major时，不得把复查状态写成reviewed；可以标needs_revision导出部分交付并说明缺陷。rendered只表示查看过实际画面，不证明业务已运行、所有状态合格或性能通过；没有浏览器时保留static或not_run。reviewed表示记录的复查完成，不是自动“审美合格证”。
+
+### 关键运动与连续操作
+
+`visual.motion`保留简短文本，旧记录无`motion_plan`也能导出。按[动画与交互](motion-and-interaction.md)设计了需要交接的关键行为时，可加`visual.motion_plan`数组；没有有关运动时留空或省略，不强制每个按钮建立规格。
+
+| 每项字段 | 内容 |
+| --- | --- |
+| `id`、`interaction_id` | 唯一运动ID、已有交互ID；触发与前后状态取自该交互 |
+| `purpose`、`continuity` | 表现目的；保持哪个对象、焦点、选区或滚动关系 |
+| `properties` | 非空字符串数组，实际变化的属性 |
+| `duration_ms`、`easing` | 有限非负毫秒数、实际曲线说明；不是套用固定动画时长 |
+| `interrupt`、`reduced_motion` | 快速重复、中途返回/关闭如何处理；减少动效时如何保留反馈与业务结果 |
+| `verification`、`evidence_ids` | not_run／static／browser／device，已有证据ID |
+
+非not_run级别需关联同类型记录；browser／device记录合起来需覆盖对应交互的前后状态。操作记录说明开始、中途、结束及适用的重复、中断和回退检查，不能用截图冒充动态验证。脚本只检查记录结构与引用，不观看运动，也不验证日志是否真实或动画是否专业。
+
+HANDOFF.md会呈现这些行为，AI-START.md提醒保留连续性及回退。已有截图可解释关键画面；短录屏可按用户要求另交，当前打包器的证据附件仍只接受图片和UTF-8文本，不声称自动打包视频。缺少动态验证会明确提示，但不阻止如实交付部分完成的参考包。
 
 ## 构建与检查
 

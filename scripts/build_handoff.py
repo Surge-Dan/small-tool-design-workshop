@@ -7,6 +7,7 @@ Standard library only. This validates recorded claims, not prototype behavior.
 import argparse
 import copy
 import json
+import math
 import re
 import shutil
 import sys
@@ -165,6 +166,30 @@ def validate(spec, root):
     require(isinstance(tokens, dict) and bool(tokens), "记录实际采用的visual.tokens")
     require(all(isinstance(k, str) and k.strip() and isinstance(v, str) and v.strip()
                 for k, v in tokens.items()), "设计参数必须为非空名称和字符串值")
+    if "motion_plan" in visual:
+        motions = index(items(visual, "motion_plan", "visual"), "visual.motion_plan")
+        for motion in motions.values():
+            for key in ("interaction_id", "purpose", "continuity", "easing",
+                        "interrupt", "reduced_motion"):
+                text_field(motion, key, "motion")
+            references([motion["interaction_id"]], interactions, "motion.interaction_id")
+            strings(motion, "properties", "motion", True)
+            duration = motion.get("duration_ms")
+            require(type(duration) in (int, float) and duration >= 0
+                    and (type(duration) is int or math.isfinite(duration)),
+                    "motion.duration_ms必须为有限的非负毫秒数")
+            level = motion.get("verification")
+            require(level in ("not_run", "static", "browser", "device"), "无效动效验证级别")
+            evidence_ids = strings(motion, "evidence_ids", "motion")
+            references(evidence_ids, evidence, "motion.evidence_ids")
+            if level != "not_run":
+                records = [evidence[e] for e in evidence_ids if evidence[e]["kind"] == level]
+                require(bool(records), f"{motion['id']}缺少{level}动效记录；截图不能证明运动")
+                if level in ("browser", "device"):
+                    interaction = interactions[motion["interaction_id"]]
+                    covered = {state for record in records for state in record["state_ids"]}
+                    require({interaction["from_state"], interaction["to_state"]}.issubset(covered),
+                            f"{motion['id']}的操作记录需关联前后状态")
     if "design_plan" in visual:
         plan = visual["design_plan"]
         require(isinstance(plan, dict), "visual.design_plan必须是对象")
@@ -219,6 +244,9 @@ def validate(spec, root):
 def warnings(spec):
     result = list(spec["limitations"])
     visual = spec["visual"]
+    for motion in visual.get("motion_plan", []):
+        if motion["verification"] in ("not_run", "static"):
+            result.append(f"动效{motion['id']}尚无动态操作验证：{motion['verification']}")
     if "design_plan" not in visual:
         result.append("未记录视觉设计路线；旧版记录仍可交接")
     review = visual.get("review")
@@ -288,7 +316,23 @@ def handoff(spec):
                       f"- 模拟：{'是' if rule['simulation'] else '否'}", ""])
     lines.extend(["## 视觉与资产", "", spec["visual"]["direction"], "", "```json",
                   json.dumps(spec["visual"]["tokens"], ensure_ascii=False, indent=2), "```", "",
-                  f"动效：{spec['visual']['motion'] or '无额外动效'}", ""])
+                  f"动效：{spec['visual']['motion'] or ('关键运动详见下方' if spec['visual'].get('motion_plan') else '无额外动效')}", ""])
+    motions = spec["visual"].get("motion_plan", [])
+    if motions:
+        lines.extend(["### 关键运动与连续操作", "",
+                      "规格与记录不等于运动质量已通过；按对应操作证据核对。", ""])
+        interactions = {entry["id"]: entry for entry in spec["interactions"]}
+        for motion in motions:
+            interaction = interactions[motion["interaction_id"]]
+            lines.extend([f"#### {motion['id']}：{motion['purpose']}", "",
+                          f"- 交互：{motion['interaction_id']}；触发：{interaction['trigger']}",
+                          f"- 状态：{interaction['from_state']} → {interaction['to_state']}",
+                          f"- 连续性：{motion['continuity']}",
+                          f"- 属性：{', '.join(motion['properties'])}",
+                          f"- 时长：{motion['duration_ms']}ms；曲线：{motion['easing']}",
+                          f"- 快速重复／中断：{motion['interrupt']}",
+                          f"- 减少动效：{motion['reduced_motion']}",
+                          f"- 验证：{motion['verification']}；证据：{', '.join(motion['evidence_ids']) or '无'}", ""])
     lines.append(bullet([f"{a['name']}：{a['usage']}；来源：{a['source']}；许可：{a['license']}；"
                          f"内嵌：{'是' if a['embedded'] else '否'}" for a in spec["visual"]["assets"]]))
     plan = spec["visual"].get("design_plan")
@@ -333,6 +377,7 @@ AI_START = """# 给下一位AI的开工说明
 
 - 以已确认需求、业务规则、页面状态和验收例子为约束，保留原型的视觉层级、素材与交互；不要只凭截图猜规则或默认套通用模板。
 - 有visual.design_plan和visual.review时读取表现意图、必保留特征、方法及未完成发现。不要把简约自动加装饰，也不要把复杂方向简化成默认表单。reviewed只表示记录的复查已完成，不保证视觉效果或运行测试通过。
+- 有visual.motion_plan时保留前后状态、对象连续性、时长曲线、中断与减少动效行为。实现方式可按目标环境调整，不能只复刻动画外观而丢失焦点、滚动和业务状态；截图不能证明动态表现。
 - 用户最新明确的需求优先。原型、截图与设计记录若冲突，指出具体冲突并确认，不悄悄决定。未实现、未验证不等于没有要求。
 - 若用户尚未指定目标平台、技术栈和真实数据来源，先确认开发需要的缺口。原型里的模拟数据、价格和服务不能冒充生产接口；不擅自加入登录、支付或后台。
 - prototype.html是设计与行为参考，不能直接认定为生产代码。按目标环境实现，遵守资产许可，保留明确的排除项与离线约束。

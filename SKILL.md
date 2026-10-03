@@ -2,8 +2,8 @@
 name: small-tool-design-workshop
 description: >-
   Design visually distinctive small-tool prototypes from ideas, requirements,
-  references or HTML. Align needs, use a visual SOP for minimal, material-rich,
-  illustrated or complex scene designs, verify rendered states, and export HTML
+  references or HTML. Align needs, design task-focused layouts, refine visuals
+  and interruptible motion, verify rendered states, and export HTML
   plus an AI development handoff when requested. Use for creation and iteration.
 ---
 
@@ -20,6 +20,8 @@ description: >-
 交付质量以三件事为准：明确需求逐项落实、视觉表达来自具体内容、核心及相关异常交互可操作。不能用精美首屏掩盖功能缺失，也不能为了避免“AI 味”把所有产品做成同一种极简页面。
 
 视觉效果是核心交付。简约和复杂都是表达方式，不是质量等级；简约也须打磨比例与排版，复杂也须有清晰内容与操作。按 [视觉设计 SOP](references/visual-sop.md) 选择表达路线、验证关键画面、扩展状态并对抗式复查；不把高保真仅解释为功能齐全或装饰很多。
+
+原型要让用户理解产品、体验核心任务并判断设计方向。先确定使用环境、操作频率、核心对象和最大操作成本，再决定布局与表现方式。专业质量落实在信息主次、字形与构图、素材、连续操作和状态衔接；功能数量、动画数量、库的复杂度与自评分不能替代这些判断。
 
 这个 Skill 的可复用能力是：把需求、页面状态和验收用同一份设计记录关联；通过参考或关键页面小样减少审美猜测；用真实交互与结果检查把关；在需要时用脚本导出下一位 AI 能直接阅读的开发参考包。不得把“使用了 Skill”当作质量保证，也不以增加文档数量代替好作品。
 
@@ -42,6 +44,8 @@ description: >-
 - 验收：少量可观察例子，说明怎样才算满足本次需求；需要交给 AI 开发时确认参考包要求，不在原型阶段逼用户选择技术栈。
 
 默认按高保真可交互原型设计；提供方案时写清布局、视觉差异与适用场景，并给推荐。需要时展示参考图或关键页面静态小样，让用户确认看得见的方向；不默认做两套完整原型。用户未确认前只输出简报／方向／小样，不先生成完整业务原型。低风险细节可提出建议，关键布局和视觉决策不能默认为已获认可。具体方法见 [brief-and-review.md](references/brief-and-review.md)。
+
+把核心路径、布局和视觉方向尽量合并成一份短简报供确认。用户确认整份简报或明确委托后，不再将每个部分拆成审批；用户只选了风格且仍有核心缺口时，仅补确认该缺口。已确认方向内的字体、对齐、动画曲线等细节由设计师打磨，不把专业决策逐项交回用户。
 
 ### 直接设计模式
 
@@ -77,6 +81,7 @@ description: >-
 - 需求模糊、需要设计命题或设计方向：`references/design-engine.md`；
 - 前置确认、可视化选方向、结果质量或模糊修改反馈：`references/brief-and-review.md`；
 - 生成、重定视觉或要求高质量画面：`references/visual-sop.md`；这是视觉执行入口，按实际缺口再读素材或移动端规则；
+- 连续操作、状态过渡、动画、手势或空间运动：`references/motion-and-interaction.md`；先确定对象关系与中断行为，再选实现；
 - 判断玩法、流程、结果或状态：`references/experience-archetypes.md`；
 - 定视觉语言、排版、字体、材质：`references/visual-language.md`；
 - 需要高保真素材、图标/插画、外部工具或复杂渲染：`references/visual-resources.md`；
@@ -98,7 +103,7 @@ description: >-
 
 ### 2.2 判断体验骨架
 
-选择最接近的类型：测试测评、分析诊断、生成器、计算工具、推荐工具、内容编辑器、游戏化工具。类型只决定任务骨架，不决定视觉模板。
+选择最接近的类型：测试测评、分析诊断、生成器、计算工具、推荐工具、内容编辑器、记录与回看、游戏化工具。再按使用频率选择连续录入、直接编辑与预览、探索比较、分步决策或结果揭示等结构；类型、体验结构和视觉路线分别判断，不将某类任务绑定到某种皮肤。具体取舍见 [experience-archetypes.md](references/experience-archetypes.md)。
 
 先设计最短路径：
 
@@ -114,6 +119,8 @@ description: >-
 
 从主题提取对象、动作、材质、情绪和场景，再选择一个主要视觉签名：主题化输入组件、特殊结果卡、贯穿流程的材质或一个有意义的转场。
 
+视觉签名围绕核心任务组织，不挤占主要操作。高频录入优先当前对象、快捷复用与焦点连续性；编辑优先画布与修改反馈；探索或展示按内容关系安排空间。先检验完成核心动作所需的点击、滚动与视线移动，再判断主题表达是否合适。
+
 当用户任务是简单的笔记本、日记、手册或轻记录时，可优先采用单页结构：
 
 ```text
@@ -126,7 +133,7 @@ description: >-
 
 ### 2.4 建立轻量设计系统
 
-写 HTML 前确定必要的语义色、文字层级、内容密度、对齐方式、组件和主要视觉特征；需要动效时再确定反馈节奏。每个选择应服务任务理解、可读性、情绪、品牌或体验辨识度，不强制固定颜色或动效数量。
+写 HTML 前确定必要的语义色、文字层级、内容密度、对齐方式、组件和主要视觉特征；涉及状态变化时同时确定对象连续性、反馈节奏和中断行为。每个选择应服务任务理解、可读性、情绪、品牌或体验辨识度，不强制固定颜色或动效数量。
 
 将已确认的简报落实为页面结构和视觉规则，再按效果选择素材与渲染工具。使用版式与字体、物件与材质、图片与艺术指导、空间与动态等路线，可组合使用；路线不强制技术栈。展示级原型不因“只是原型”降低素材、排版和反馈质量；快速验证版本仅在用户选择或任务明确要求时采用。
 
@@ -134,11 +141,13 @@ description: >-
 
 ### 2.5 三遍原型法
 
-1. 结构遍：先确认页面、状态、路径和核心按钮；
+1. 结构遍：先确认页面、状态、路径、核心按钮与需要保持的对象关系；
 2. 视觉遍：再落实主题色、字体、材质、版式和结果卡；
-3. 节奏遍：最后补必要的反馈、切换、揭示、返回和保存。
+3. 节奏遍：落实并打磨反馈、切换、揭示、返回和保存，验证快速重复、中断与焦点，不在最后才猜转场关系。
 
 原型完成后检查：是否只靠换标题和颜色区分主题，是否遗漏需求，是否存在无反馈或无法恢复的操作。换主题测试针对整体表达，不要求重造通用控件；保留服务情绪、品牌或辨识度的装饰，删除无依据、干扰操作或破坏阅读的装饰。
+
+首次实际渲染后主动找出最影响体验或画面质量的少量具体问题，局部修正并复查相关状态；没有具体问题时停止。字形、单位、光学对齐、构图与素材的打磨方法见 [visual-language.md](references/visual-language.md)。
 
 ## 3. AI 风格反模式
 
@@ -162,10 +171,10 @@ description: >-
 - HTML、CSS、JavaScript 默认内嵌；制作时可用构建工具、外部素材和许可允许使用的库，交付文件无需用户构建；
 - 默认离线交付：将所需素材、图标、字体及库按许可打包/内嵌，移除运行时 CDN、远程字体、外链图片和素材/生图 API 调用；用户明确选择联网预览时说明网络依赖；
 - 默认移动端优先，主要基准 390×844，关注 320～414 宽度；明确指定桌面或其他目标设备时按该布局和尺寸验收；
-- 使用本地模拟数据；计算、分析和推荐规则可解释、可复现。抽签、随机游戏等按玩法使用随机性，必要时用固定种子验证，不擅自改成固定结果；
+- 使用用户输入、本地数据或明确标注的模拟数据；可本地完成的计算、记录、图像处理等按需求产生实际结果。外部服务未接入时说明演示边界；计算、分析和推荐规则可解释、可复现。抽签、随机游戏等按玩法使用随机性，必要时用固定种子验证，不擅自改成固定结果；
 - 主要按钮、选择、输入、返回、重试、结果和保存动作真实可操作；
 - 不依赖 hover，保证触控区域、键盘焦点、文本对比度和安全区；
-- 尊重 `prefers-reduced-motion`，不为瞬间完成的动作伪造长 loading。
+- 尊重 `prefers-reduced-motion`，不为瞬间完成的动作伪造长 loading；减少动效与完整动效得到相同业务结果，状态提交不依赖动画结束事件。
 
 移动端细节按需读取：[mobile-h5-patterns.md](references/mobile-h5-patterns.md)。
 
@@ -186,7 +195,7 @@ description: >-
 ```text
 work_mode, target_user, core_scenario, core_goal, main_flow,
 page_states, design_brief, brief_confirmation_or_delegation, confirmed_decisions,
-open_questions, visual_direction, visual.design_plan, visual.review, visual_tokens, asset_manifest, rendering_choices,
+open_questions, visual_direction, visual.design_plan, visual.motion_plan, visual.review, visual_tokens, asset_manifest, rendering_choices,
 interaction_rules, content_and_mock_data,
 explicitly_excluded_items, requirement_mapping, verification_evidence, known_limitations
 ```
@@ -210,6 +219,7 @@ explicitly_excluded_items, requirement_mapping, verification_evidence, known_lim
 - 有浏览器工具时实际打开 HTML，走通核心路径和适用的异常/恢复路径，检查控制台错误；涉及导出时检查生成文件的内容与显示；
 - 按目标设备检查主要尺寸及有意义的边界尺寸；移动端使用主要基准及窄屏宽度，桌面使用确认的横屏／窗口尺寸。检查首屏层级、长内容、选中/错误状态、按钮可达性、文字对比和溢出；键盘、安全区、原生分享等未在对应设备验证时如实注明；
 - 对照确认简报检查布局和风格，素材比例/边缘/清晰度、图标线条、字体层级、间距、材质、动效节奏及结果页是否一致；不能把“高级”仅实现为渐变或大量装饰；
+- 涉及动效和连续操作时观察开始、中途、结束及快速重复、返回与减少动效；检查焦点、滚动位置和同一对象的连续性。静态截图不证明动画质量；无对应运动或录屏工具时明确缺少动态验证，不用猜测代替观察；
 - 以用户、艺术指导、怀疑者和下一位开发 AI 四个立场做一次轻量对抗式复查，记录具体画面／状态与修复；复杂效果检查实际运动与回退，简约效果检查真实内容和字级。按 SOP 分级处理，不虚构发现、不靠自评分证明质量；
 - 检查有无意外外部依赖，结果与用户输入是否一致，是否只有标题和颜色表达主题；离线交付实际禁用网络后打开文件并走核心路径，确认库、图片、字体及导出所需资源均可用。
 

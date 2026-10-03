@@ -251,5 +251,98 @@ class ExportTests(unittest.TestCase):
             self.build()
 
 
+    def motion_plan(self, verification="not_run", evidence_ids=None):
+        return {"id": "M1", "interaction_id": "I1", "purpose": "结果与输入关系清楚",
+                "continuity": "保留输入值与当前焦点", "properties": ["opacity", "transform"],
+                "duration_ms": 220, "easing": "ease-out", "interrupt": "再次提交重定向到最新结果",
+                "reduced_motion": "直接切换结果并保留输入", "verification": verification,
+                "evidence_ids": [] if evidence_ids is None else evidence_ids}
+
+    def test_motion_behaviors_survive_json_markdown_and_zip(self):
+        motion = self.motion_plan()
+        self.spec["visual"]["motion_plan"] = [motion]
+        directory, archive, notices = self.build()
+        record = json.loads((directory / "design-spec.json").read_text(encoding="utf-8"))
+        self.assertEqual(record["visual"]["motion_plan"], [motion])
+        handoff = (directory / "HANDOFF.md").read_text(encoding="utf-8")
+        for behavior in (motion["continuity"], motion["interrupt"], motion["reduced_motion"]):
+            self.assertIn(behavior, handoff)
+        self.assertIn("ready → result", handoff)
+        self.assertNotIn("动效：无额外动效", handoff)
+        self.assertIn("visual.motion_plan", (directory / "AI-START.md").read_text(encoding="utf-8"))
+        self.assertTrue(any("M1" in n and "尚无动态" in n for n in notices))
+        with zipfile.ZipFile(archive) as package:
+            self.assertEqual(package.read("交接包/HANDOFF.md"),
+                             (directory / "HANDOFF.md").read_bytes())
+
+    def test_invalid_motion_specs_reject_before_writing(self):
+        variants = [
+            {"duration_ms": -1}, {"duration_ms": True}, {"duration_ms": "220"},
+            {"duration_ms": float("nan")}, {"duration_ms": float("inf")},
+            {"interaction_id": "absent"}, {"evidence_ids": ["absent"]},
+            {"properties": []}, {"interrupt": ""}, {"reduced_motion": ""},
+            {"verification": "rendered"},
+        ]
+        for variant in variants:
+            with self.subTest(variant=variant):
+                motion = self.motion_plan()
+                motion.update(variant)
+                self.spec["visual"]["motion_plan"] = [motion]
+                with self.assertRaises(ValueError):
+                    self.build()
+                self.assertFalse((self.root / "交接包").exists())
+                self.assertFalse((self.root / "交接包.zip").exists())
+        self.spec["visual"]["motion_plan"] = [self.motion_plan(), self.motion_plan()]
+        with self.assertRaises(ValueError):
+            self.build()
+
+    def test_screenshot_does_not_prove_dynamic_behavior(self):
+        image = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jA7sAAAAASUVORK5CYII=")
+        (self.root / "fixture.png").write_bytes(image)
+        self.spec["evidence"].append({"id": "shot", "kind": "screenshot",
+                                     "description": "测试文件，不是运动验证",
+                                     "state_ids": ["ready", "result"], "path": "fixture.png",
+                                     "viewport": {"width": 390, "height": 844}})
+        self.spec["visual"]["motion_plan"] = [self.motion_plan("browser", ["shot"])]
+        with self.assertRaisesRegex(ValueError, "截图不能证明运动"):
+            self.build()
+
+    def test_motion_running_evidence_covers_related_states(self):
+        # These are validation fixtures, not claims that a browser was run here.
+        self.spec["evidence"].append({"id": "run", "kind": "browser",
+                                     "description": "结构测试中的操作记录占位",
+                                     "state_ids": ["result"]})
+        self.spec["visual"]["motion_plan"] = [self.motion_plan("browser", ["run"])]
+        with self.assertRaisesRegex(ValueError, "前后状态"):
+            self.build()
+        self.spec["evidence"][-1]["state_ids"] = ["ready", "result"]
+        directory, _, notices = self.build()
+        self.assertFalse(any("M1" in n and "尚无动态" in n for n in notices))
+        exported = json.loads((directory / "design-spec.json").read_text(encoding="utf-8"))
+        exporter.validate(exported, directory.resolve())
+
+    def test_static_motion_evidence_keeps_dynamic_warning(self):
+        self.spec["visual"]["motion_plan"] = [self.motion_plan("static", ["E1"])]
+        _, _, notices = self.build()
+        self.assertTrue(any("M1" in n and "尚无动态" in n for n in notices))
+
+    def test_empty_optional_motion_plan_preserves_legacy_export(self):
+        self.spec["visual"]["motion_plan"] = []
+        directory, _, notices = self.build()
+        handoff = (directory / "HANDOFF.md").read_text(encoding="utf-8")
+        self.assertIn("动效：无额外动效", handoff)
+        self.assertFalse(any("动效" in n for n in notices))
+
+    def test_device_motion_claim_needs_device_records(self):
+        self.spec["evidence"].append({"id": "run", "kind": "browser",
+                                     "description": "结构测试占位",
+                                     "state_ids": ["ready", "result"]})
+        self.spec["visual"]["motion_plan"] = [self.motion_plan("device", ["run"])]
+        with self.assertRaisesRegex(ValueError, "device"):
+            self.build()
+        self.spec["evidence"][-1]["kind"] = "device"
+        self.build()
+
+
 if __name__ == "__main__":
     unittest.main()
