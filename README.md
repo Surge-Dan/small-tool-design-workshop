@@ -1,10 +1,21 @@
-# 🛠️小工具设计工坊
+<div align="center">
 
-把小工具想法做成好看、可交互的高保真原型。适合想验证产品、试一试玩法，或把设计交给AI继续开发的人。
+# 🛠️Small Tool Design Workshop
 
-你可以只带一个想法，也可以提供需求、参考图或已有HTML。Skill会先确认怎么用、页面怎么安排、视觉想做成什么样，再开始制作。功能、布局和风格都按这次需求确定。
+### 面向小工具创作者的高保真原型设计Skill
 
-工坊主要帮你处理三件事：把模糊想法整理成可制作的需求，找到适合工具的视觉表达，再把页面和交互细节留下来，方便修改和继续开发。
+![Platform](https://img.shields.io/badge/Platform-Codex-blue)
+![Focus](https://img.shields.io/badge/Focus-Prototype-brightgreen)
+![Output](https://img.shields.io/badge/Output-Single_HTML-orange)
+![Delivery](https://img.shields.io/badge/Delivery-Offline-teal)
+
+**从需求确认到视觉与交互设计，完成可体验、可继续开发的小工具原型**
+
+</div>
+
+小工具设计工坊适合想验证产品、试一试玩法，或把设计交给AI继续开发的人。你可以提供一个想法、一份需求、参考图或已有HTML。Skill会先确认使用场景、页面布局和视觉方向，再制作可交互的高保真原型，并保留方便后续修改和开发的设计说明。
+
+> 想法还没成形，可以先聊；方向确定以后，再把画面和交互认真做好。
 
 ## 使用方式
 
