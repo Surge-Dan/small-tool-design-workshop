@@ -165,8 +165,14 @@ python scripts/build_handoff.py build --spec <项目目录>/design-spec.json --h
 
 这些检查覆盖记录格式和打包行为。视觉效果、动画和使用体验需要在生成的原型中单独验证。
 
-## 💬反馈与建议
+## 💬贡献与反馈
 
-欢迎提交Issue或PullRequest。需求确认太繁琐、某个操作不顺手，或者视觉效果和预期差得很远，都可以直接提。
+欢迎提交[Issue](https://github.com/Surge-Dan/small-tool-design-workshop/issues)或[PullRequest](https://github.com/Surge-Dan/small-tool-design-workshop/pulls)。为了方便定位问题，请尽量提供：
 
-附上输入、期望结果、实际差异，以及截图或最小HTML，会更容易定位问题。分享前请移除个人敏感信息。
+- 可复现的需求描述、操作步骤或脱敏后的输入示例；
+- 使用的Agent、Skill版本和运行环境，报错时附完整错误信息；
+- 期望效果与实际结果之间的差异。
+
+视觉或交互问题，欢迎附上截图或最小HTML文件。分享前请移除真实账号、APIKey、Cookie及其他个人敏感信息。
+
+如果它帮你把一个小想法做成了满意的原型，欢迎点一个⭐，让更多创作者发现它。
