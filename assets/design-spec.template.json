@@ -2,6 +2,7 @@
   "schema_version": 1,
   "title": "待命名工具",
   "revision": "draft-1",
+  "prototype_sha256": null,
   "brief": {
     "status": "draft",
     "confirmation_evidence": "",

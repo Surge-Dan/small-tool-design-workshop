@@ -6,6 +6,7 @@ Standard library only. This validates recorded claims, not prototype behavior.
 
 import argparse
 import copy
+import hashlib
 import json
 import math
 import re
@@ -19,6 +20,45 @@ from pathlib import Path
 ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,63}\Z")
 KINDS = ("screenshot", "static", "browser", "device", "offline", "export")
 ROUTES = ("typographic", "object-led", "asset-led", "scene-led")
+SHA256 = re.compile(r"[0-9a-f]{64}\Z")
+
+
+def fingerprint(value, context):
+    require(isinstance(value, str) and SHA256.fullmatch(value) is not None,
+            f"{context}必须为小写SHA-256")
+    return value
+
+
+def version_manifest(spec, html_bytes, attachment_bytes):
+    actual = hashlib.sha256(html_bytes).hexdigest()
+    recorded = spec.get("prototype_sha256")
+    if recorded is not None:
+        require(fingerprint(recorded, "prototype_sha256") == actual,
+                "HTML版本已变化；更新设计记录并重新检查受影响项后再导出")
+    bindings = []
+    for entry in spec["evidence"]:
+        bound = entry.get("prototype_sha256")
+        if recorded is not None:
+            require(bound is not None,
+                    f"证据{entry['id']}未绑定HTML版本；新记录需实际检查后逐项绑定，不能沿用未知版本证据")
+        if bound is not None:
+            require(fingerprint(bound, f"{entry['id']}.prototype_sha256") == actual,
+                    f"证据{entry['id']}属于旧HTML版本；移除过期证据或重新检查，不能直接重标哈希")
+        source = attachment_bytes[entry["id"]]
+        digest = hashlib.sha256(source).hexdigest() if source is not None else None
+        saved = entry.get("attachment_sha256")
+        if recorded is not None and source is not None:
+            require(saved is not None,
+                    f"证据附件{entry['id']}未绑定内容版本；新记录需实际检查后记录附件哈希")
+        if saved is not None:
+            require(source is not None, f"{entry['id']}记录附件哈希但没有附件")
+            require(fingerprint(saved, f"{entry['id']}.attachment_sha256") == digest,
+                    f"证据附件{entry['id']}已变化；重新检查后更新记录")
+        bindings.append({"id": entry["id"], "prototype_sha256": bound,
+                         "attachment_sha256": digest, "version_bound": bound is not None})
+    return {"prototype_sha256": actual, "prototype_bytes": len(html_bytes),
+            "evidence": bindings,
+            "scope": "字节版本与附件一致性，不证明观察真实、功能通过或审美质量"}
 
 
 def require(condition, message):
@@ -243,6 +283,10 @@ def validate(spec, root):
 
 def warnings(spec):
     result = list(spec["limitations"])
+    if spec.get("prototype_sha256") is None:
+        result.append("旧版设计记录未绑定HTML版本，无法核验记录与当前原型的一致性")
+    if any(e.get("prototype_sha256") is None for e in spec["evidence"]):
+        result.append("部分证据未绑定HTML版本，仅作未核验版本的参考；不能自动视为当前验证")
     visual = spec["visual"]
     for motion in visual.get("motion_plan", []):
         if motion["verification"] in ("not_run", "static"):
@@ -287,6 +331,8 @@ def handoff(spec):
     b = spec["brief"]
     lines = [f"# {spec['title']}开发交接", "", "## 设计依据", "",
              f"- 版本：{spec.get('revision', '未标注')}",
+             f"- 记录绑定的HTML SHA-256：{spec.get('prototype_sha256') or '未绑定'}",
+             "- 实际导出文件及证据的版本清单见ARTIFACT.json；哈希一致不代表功能或视觉通过。",
              f"- 确认状态：{b['status']}；依据：{b['confirmation_evidence']}",
              f"- 用户：{b['target_user']}", f"- 场景：{b['scenario']}",
              f"- 目标：{b['goal']}", f"- 离线要求：{'是' if b['offline'] else '否'}",
@@ -378,6 +424,7 @@ AI_START = """# 给下一位AI的开工说明
 - 以已确认需求、业务规则、页面状态和验收例子为约束，保留原型的视觉层级、素材与交互；不要只凭截图猜规则或默认套通用模板。
 - 有visual.design_plan和visual.review时读取表现意图、必保留特征、方法及未完成发现。不要把简约自动加装饰，也不要把复杂方向简化成默认表单。reviewed只表示记录的复查已完成，不保证视觉效果或运行测试通过。
 - 有visual.motion_plan时保留前后状态、对象连续性、时长曲线、中断与减少动效行为。实现方式可按目标环境调整，不能只复刻动画外观而丢失焦点、滚动和业务状态；截图不能证明动态表现。
+- 用ARTIFACT.json核对当前HTML字节版本；未绑定版本的旧证据只作参考，修改HTML后重新检查受影响项，不把旧证据直接重标为当前版本。
 - 用户最新明确的需求优先。原型、截图与设计记录若冲突，指出具体冲突并确认，不悄悄决定。未实现、未验证不等于没有要求。
 - 若用户尚未指定目标平台、技术栈和真实数据来源，先确认开发需要的缺口。原型里的模拟数据、价格和服务不能冒充生产接口；不擅自加入登录、支付或后台。
 - prototype.html是设计与行为参考，不能直接认定为生产代码。按目标环境实现，遵守资产许可，保留明确的排除项与离线约束。
@@ -394,7 +441,11 @@ def build(spec_path, html_path, output):
     html_path = html_path.resolve()
     require(html_path.is_file() and html_path.suffix.lower() in {".html", ".htm"},
             "提供存在的HTML原型文件")
-    require(bool(html_path.read_text(encoding="utf-8-sig").strip()), "原型文件为空")
+    html_bytes = html_path.read_bytes()
+    require(bool(html_bytes.decode("utf-8-sig").strip()), "原型文件为空")
+    attachment_bytes = {key: source.read_bytes() if source is not None else None
+                        for key, source in attachments.items()}
+    artifact = version_manifest(spec, html_bytes, attachment_bytes)
     output = output.absolute()
     archive_path = output.with_name(output.name + ".zip")
     require(not output.exists() and not archive_path.exists(), "输出目录或ZIP已存在，请使用新名称")
@@ -405,19 +456,21 @@ def build(spec_path, html_path, output):
         temp = Path(temp)
         content = temp / "content"
         content.mkdir()
-        shutil.copyfile(html_path, content / "prototype.html")
+        (content / "prototype.html").write_bytes(html_bytes)
         for e in exported["evidence"]:
             source = attachments[e["id"]]
             if source is not None:
                 folder = "screenshots" if e["kind"] == "screenshot" else "evidence"
                 relative = Path(folder) / (e["id"] + source.suffix.lower())
                 (content / folder).mkdir(exist_ok=True)
-                shutil.copyfile(source, content / relative)
+                (content / relative).write_bytes(attachment_bytes[e["id"]])
                 e["path"] = relative.as_posix()
         (content / "design-spec.json").write_text(
             json.dumps(exported, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         (content / "HANDOFF.md").write_text(handoff(exported), encoding="utf-8")
         (content / "AI-START.md").write_text(AI_START, encoding="utf-8")
+        (content / "ARTIFACT.json").write_text(
+            json.dumps(artifact, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         staged_zip = temp / "bundle.zip"
         with zipfile.ZipFile(staged_zip, "w", zipfile.ZIP_DEFLATED) as archive:
             for file in sorted(content.rglob("*")):

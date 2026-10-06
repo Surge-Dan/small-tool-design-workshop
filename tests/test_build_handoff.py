@@ -2,6 +2,7 @@
 
 import base64
 import copy
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -77,6 +78,73 @@ class ExportTests(unittest.TestCase):
                 self.assertNotIn("..", relative.parts)
                 source = directory / Path(*relative.parts[1:])
                 self.assertEqual(package.read(name), source.read_bytes())
+
+    def test_bound_html_and_evidence_export_with_manifest(self):
+        current = hashlib.sha256(self.html.read_bytes()).hexdigest()
+        self.spec["prototype_sha256"] = current
+        self.spec["evidence"][0]["prototype_sha256"] = current
+        directory, _, _ = self.build()
+        artifact = json.loads((directory / "ARTIFACT.json").read_text(encoding="utf-8"))
+        self.assertEqual(artifact["prototype_sha256"], current)
+        self.assertTrue(artifact["evidence"][0]["version_bound"])
+
+    def test_changed_html_rejects_old_record_without_output(self):
+        self.spec["prototype_sha256"] = hashlib.sha256(self.html.read_bytes()).hexdigest()
+        self.html.write_text("<!doctype html><p>新版</p>", encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "HTML版本"):
+            self.build()
+        self.assertFalse((self.root / "交接包").exists())
+
+    def test_rebinding_record_does_not_make_old_evidence_current(self):
+        old = hashlib.sha256(self.html.read_bytes()).hexdigest()
+        self.spec["evidence"][0]["prototype_sha256"] = old
+        self.html.write_text("<!doctype html><p>新版</p>", encoding="utf-8")
+        self.spec["prototype_sha256"] = hashlib.sha256(self.html.read_bytes()).hexdigest()
+        with self.assertRaisesRegex(ValueError, "旧HTML"):
+            self.build()
+
+    def test_changed_attachment_rejects_without_export(self):
+        log = self.root / "检查.txt"
+        log.write_text("第一次观察", encoding="utf-8")
+        self.spec["evidence"][0].update(path="检查.txt", attachment_sha256=hashlib.sha256(log.read_bytes()).hexdigest())
+        log.write_text("替换后的观察", encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "附件"):
+            self.build()
+        self.assertFalse((self.root / "交接包.zip").exists())
+
+    def test_invalid_fingerprint_rejects(self):
+        for value in ("", "not-a-hash", 123, "A" * 64):
+            with self.subTest(value=value):
+                self.spec["prototype_sha256"] = value
+                with self.assertRaises(ValueError):
+                    self.build()
+
+    def test_legacy_evidence_is_not_silently_bound(self):
+        directory, _, notices = self.build()
+        exported = json.loads((directory / "design-spec.json").read_text(encoding="utf-8"))
+        self.assertNotIn("prototype_sha256", exported["evidence"][0])
+        self.assertTrue(any("未绑定HTML版本" in s for s in notices))
+        artifact = json.loads((directory / "ARTIFACT.json").read_text(encoding="utf-8"))
+        self.assertFalse(artifact["evidence"][0]["version_bound"])
+
+    def test_new_record_cannot_reuse_unbound_legacy_evidence(self):
+        self.spec["prototype_sha256"] = hashlib.sha256(self.html.read_bytes()).hexdigest()
+        with self.assertRaisesRegex(ValueError, "未绑定HTML版本"):
+            self.build()
+        self.assertFalse((self.root / "交接包").exists())
+
+    def test_new_record_requires_attachment_fingerprint(self):
+        log = self.root / "检查.txt"
+        log.write_text("观察", encoding="utf-8")
+        current = hashlib.sha256(self.html.read_bytes()).hexdigest()
+        self.spec["prototype_sha256"] = current
+        self.spec["evidence"][0].update(path="检查.txt", prototype_sha256=current)
+        with self.assertRaisesRegex(ValueError, "附件.*未绑定"):
+            self.build()
+        self.spec["evidence"][0]["attachment_sha256"] = hashlib.sha256(log.read_bytes()).hexdigest()
+        directory, _, _ = self.build()
+        artifact = json.loads((directory / "ARTIFACT.json").read_text(encoding="utf-8"))
+        self.assertEqual(artifact["evidence"][0]["attachment_sha256"], self.spec["evidence"][0]["attachment_sha256"])
 
     def test_evidence_files_are_copied_and_paths_rewritten(self):
         (self.root / "检查.txt").write_text("操作记录", encoding="utf-8")

@@ -43,11 +43,13 @@
 从需求到交付，通常经过四步。需要你选择的方向会集中确认，具体设计细节在制作时打磨。
 
 1. **确认需求**：谁在什么情况下使用，输入什么，得到什么，以及怎样判断结果符合要求。把操作路径、布局和视觉方向整理成一份短简报，合并确认。
-2. **确定设计**：从使用场景选择版式和视觉表达。文字说不清风格时，先看参考或关键页面小样，再做完整原型。
+2. **确定设计**：从使用场景选择版式和视觉表达。风格模糊或参考冲突时，用真实内容做关键页面小样，说明差异并给推荐；复杂效果先验证能否实现。
 3. **制作原型**：围绕核心操作完成页面、状态和反馈。计算与本地处理使用真实输入；尚未接入的外部服务明确标注为演示。
 4. **检查交付**：实际打开页面，检查画面、交互、动画和相关异常情况。修正问题后交付，并说明验证范围。需要继续开发时，再导出参考包。
 
-只要玩法，就先讨论玩法；只改一个细节，就检查相关部分。简单工具不增加无关流程。
+只要玩法，就先讨论玩法；只改一个细节，就检查相关部分。完整方案或明确委托可以直接制作，简单工具不增加无关流程。
+
+修改前保存可恢复版本，写清改动与保留项；修改后同时检查。快照包含HTML、已有设计记录和引用附件，可恢复到新目录，方便找回上一版满意的设计。具体方法见[修改与恢复](references/iteration-and-evidence.md)。
 
 需求确认和修改方法见[需求与评审](references/brief-and-review.md)。
 
@@ -109,6 +111,7 @@
     ├── design-spec.json    需求、状态与设计参数
     ├── HANDOFF.md          交接说明与验收要求
     ├── AI-START.md         下一位AI的开工说明
+    ├── ARTIFACT.json       原型与证据的版本清单
     ├── screenshots/        有实际截图时附带
     └── evidence/           有文本证据附件时附带
 ```
@@ -120,6 +123,8 @@
 缺少截图或动态验证时，会在交接说明中标明。只要单HTML时，不强制生成参考包，也不会在原型里添加面向开发者的导出按钮。
 
 打包器仅依赖Python标准库，检查确认状态、文件引用和证据，生成目录与ZIP。草稿、未解决的关键问题或无效引用会阻止导出，已有输出不会被覆盖。打包成功只说明记录与文件符合要求，原型仍需实际运行检查。
+
+新记录和证据可绑定实际HTML版本。HTML或已绑定附件变化后，导出会提示失效并停止；旧版未绑定记录仍可导出，并明确说明版本无法核验。哈希用于核对文件，不代表功能或视觉已经通过检查。
 
 详细格式见[开发交接](references/developer-handoff.md)。
 
@@ -145,8 +150,11 @@ python "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-s
 | [agents/openai.yaml](agents/openai.yaml) | Codex展示信息与调用设置 |
 | [assets/design-spec.template.json](assets/design-spec.template.json) | 设计记录模板 |
 | [scripts/build_handoff.py](scripts/build_handoff.py) | 初始化记录、校验并导出参考包 |
+| [scripts/prototype_state.py](scripts/prototype_state.py) | 保存与恢复版本、绑定已观察的证据 |
 | [tests/test_build_handoff.py](tests/test_build_handoff.py) | 打包器测试 |
+| [tests/test_prototype_state.py](tests/test_prototype_state.py) | 版本恢复与证据绑定测试 |
 | [evals/evals.json](evals/evals.json) | 评估提示词与预期行为 |
+| [evals/comparison.md](evals/comparison.md) | 内部真实任务对照方法 |
 
 ## 本地验证
 
@@ -163,7 +171,7 @@ python scripts/build_handoff.py init --output <项目目录>/design-spec.json --
 python scripts/build_handoff.py build --spec <项目目录>/design-spec.json --html <项目目录>/原型.html --output <新目录>/工具名-handoff
 ```
 
-这些检查覆盖记录格式和打包行为。视觉效果、动画和使用体验需要在生成的原型中单独验证。
+这些检查覆盖记录格式、打包、版本恢复与证据失效。视觉效果、动画和使用体验需要在生成的原型中单独验证。内部对照会记录实际产物、需求遗漏和修改情况；未收集用户偏好时，不宣称已经证明优于直接使用Agent。
 
 ## 💬贡献与反馈
 
