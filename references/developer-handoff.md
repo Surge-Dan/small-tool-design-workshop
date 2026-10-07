@@ -51,6 +51,15 @@ python scripts/build_handoff.py init --output <项目目录>/design-spec.json --
 
 ### 视觉计划与复查
 
+`visual.design_plan`新增可选字段，旧记录保持兼容：
+
+- `subject`、`core_action`、`structure_reason`：实际操作对象、核心动作与结构理由。
+- `references[]`：`kind`为user_image／web_image／interaction／original；记录source、observation、application、not_transferred、limits。参考只作设计依据，不收入evidence冒充当前截图；是否附原图需用户授权及许可。
+- `rendering`：method、reason、key_effect、offline_strategy、export_strategy；无导出要求时export_strategy可空。feasibility为not_run／tested／not_needed，evidence_ids引用现有证据；tested须有browser／device／offline／export操作记录，静态图不能证明关键效果实现。
+- `visual.review.comparison_basis`：实际拿什么画面、参考特征或确认决策对照。findings可附category（structure／typography／asset／material／motion／interaction／delivery），处理落到原因。
+
+模板中的新增字段仍是草稿。使用字段就填实际决定，不为了导出编造依据；不适用的可选扩展可删除。交接器保留这些决定并生成说明，但不能独立证明参考已查看或效果已实测。
+
 新原型需要开发交接时填写以下可选扩展；旧版设计记录仍能导出，并提示未记录视觉路线／复查。它们与 [visual-sop.md](visual-sop.md) 对应，避免下一位AI只拿到颜色和字号却不知道表现意图。
 
 - `visual.design_plan`：主要`route`为typographic／object-led／asset-led／scene-led；`intent`和`reference_basis`说明表现意图与参考或原创依据；`anchors`、`techniques`、`acceptance`分别记录保留特征、方法及理由、视觉验收句。路线可混用，route只标主要路线。不能将草稿的undecided直接导出。

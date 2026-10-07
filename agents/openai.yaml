@@ -1,8 +1,8 @@
 interface:
   display_name: "小工具设计工坊"
-  short_description: "对齐需求与视觉方向，制作高保真小工具原型，保护已确认设计并按需导出"
+  short_description: "从参考与核心操作确定方向，制作高保真小工具原型，保护设计并按需交接"
   brand_color: "#B75E43"
-  default_prompt: "使用 $small-tool-design-workshop 将我的想法做成高保真可交互原型，补齐必要需求与视觉方向，已有明确方案时直接制作并检查。"
+  default_prompt: "使用 $small-tool-design-workshop 从我的需求和参考推导结构、素材与交互，必要时用关键画面确认方向，完成高保真原型并实际检查。"
 
 policy:
   allow_implicit_invocation: true

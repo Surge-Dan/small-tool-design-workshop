@@ -27,6 +27,19 @@
       "route": "undecided",
       "intent": "",
       "reference_basis": "",
+      "subject": "",
+      "core_action": "",
+      "structure_reason": "",
+      "references": [],
+      "rendering": {
+        "method": "",
+        "reason": "",
+        "key_effect": "",
+        "feasibility": "not_run",
+        "evidence_ids": [],
+        "offline_strategy": "",
+        "export_strategy": ""
+      },
       "anchors": [],
       "techniques": [],
       "acceptance": []
@@ -34,6 +47,7 @@
     "review": {
       "status": "not_reviewed",
       "level": "not_run",
+      "comparison_basis": "",
       "evidence_ids": [],
       "findings": []
     }

@@ -238,6 +238,30 @@ def validate(spec, root):
             text_field(plan, key, "visual.design_plan")
         for key in ("anchors", "techniques", "acceptance"):
             strings(plan, key, "visual.design_plan", True)
+        for key in ("subject", "core_action", "structure_reason"):
+            if key in plan:
+                text_field(plan, key, "visual.design_plan")
+        if "references" in plan:
+            for entry in items(plan, "references", "visual.design_plan"):
+                require(isinstance(entry, dict), "参考条目必须是对象")
+                require(entry.get("kind") in ("user_image", "web_image", "interaction", "original"),
+                        "参考kind需说明图片、交互或原创依据")
+                for key in ("source", "observation", "application", "not_transferred"):
+                    text_field(entry, key, "visual.reference")
+                text_field(entry, "limits", "visual.reference", allow_empty=True)
+        if "rendering" in plan:
+            rendering = plan["rendering"]
+            require(isinstance(rendering, dict), "rendering必须是对象")
+            for key in ("method", "reason", "key_effect", "offline_strategy"):
+                text_field(rendering, key, "visual.rendering")
+            text_field(rendering, "export_strategy", "visual.rendering", allow_empty=True)
+            require(rendering.get("feasibility") in ("not_run", "tested", "not_needed"),
+                    "无效效果可行性状态")
+            ids = strings(rendering, "evidence_ids", "visual.rendering")
+            references(ids, evidence, "visual.rendering.evidence_ids")
+            if rendering["feasibility"] == "tested":
+                require(any(evidence[e]["kind"] in ("browser", "device", "offline", "export") for e in ids),
+                        "效果tested需实际操作记录，不能只凭参考或静态截图")
     if "review" in visual:
         review = visual["review"]
         require(isinstance(review, dict), "visual.review必须是对象")
@@ -246,6 +270,8 @@ def validate(spec, root):
         require(status in ("not_reviewed", "reviewed", "needs_revision"), "无效视觉复查状态")
         require(level in ("not_run", "static", "rendered"), "无效视觉复查级别")
         evidence_ids = strings(review, "evidence_ids", "visual.review")
+        if "comparison_basis" in review:
+            text_field(review, "comparison_basis", "visual.review", allow_empty=(status == "not_reviewed"))
         references(evidence_ids, evidence, "visual.review.evidence_ids")
         if status != "not_reviewed":
             require(level != "not_run", "已复查需注明静态或实际渲染级别")
@@ -255,6 +281,9 @@ def validate(spec, root):
                     f"视觉{level}复查缺少对应证据；不能用文字记录代替实际画面")
         findings = index(items(review, "findings", "visual.review"), "visual.review.findings")
         for finding in findings.values():
+            if "category" in finding:
+                require(finding["category"] in ("structure", "typography", "asset", "material", "motion",
+                                                "interaction", "delivery"), "无效视觉问题类别")
             for key in ("location", "observation", "action"):
                 text_field(finding, key, "visual.finding")
             require(finding.get("severity") in ("blocker", "major", "minor"), "无效视觉问题级别")
@@ -293,6 +322,9 @@ def warnings(spec):
             result.append(f"动效{motion['id']}尚无动态操作验证：{motion['verification']}")
     if "design_plan" not in visual:
         result.append("未记录视觉设计路线；旧版记录仍可交接")
+    rendering = visual.get("design_plan", {}).get("rendering")
+    if rendering and rendering["feasibility"] == "not_run":
+        result.append("关键效果可行性尚未实测，渲染计划不代表已实现")
     review = visual.get("review")
     if review is None or review["status"] == "not_reviewed":
         result.append("未记录已执行的视觉复查")
@@ -388,16 +420,40 @@ def handoff(spec):
                       "", "需保留的视觉特征：", "", bullet(plan["anchors"]),
                       "", "方法与理由：", "", bullet(plan["techniques"]),
                       "", "视觉验收：", "", bullet(plan["acceptance"])])
+        for key, label in (("subject", "操作对象"), ("core_action", "核心动作"),
+                           ("structure_reason", "结构理由")):
+            if key in plan:
+                lines.extend(["", f"- {label}：{plan[key]}"])
+        if plan.get("references"):
+            lines.extend(["", "### 参考如何影响设计", "",
+                          "以下是设计依据，不是当前原型的验证证据。", ""])
+            for entry in plan["references"]:
+                lines.extend([f"- 来源（{entry['kind']}）：{entry['source']}",
+                              f"  观察：{entry['observation']}", f"  本次采用：{entry['application']}",
+                              f"  不迁移：{entry['not_transferred']}",
+                              f"  未知项：{entry['limits'] or '无额外记录'}"])
+        rendering = plan.get("rendering")
+        if rendering:
+            lines.extend(["", "### 资源与渲染实现", "",
+                          f"- 方法：{rendering['method']}；理由：{rendering['reason']}",
+                          f"- 关键效果：{rendering['key_effect']}",
+                          f"- 可行性：{rendering['feasibility']}；证据：{', '.join(rendering['evidence_ids']) or '无'}",
+                          f"- 离线：{rendering['offline_strategy']}",
+                          f"- 导出：{rendering['export_strategy'] or '本次未要求'}"])
     review = spec["visual"].get("review")
     if review:
         lines.extend(["", "### 对抗式视觉复查", "",
                       f"- 记录状态：{review['status']}；检查级别：{review['level']}",
                       f"- 证据：{', '.join(review['evidence_ids']) or '无'}", ""])
+        if review.get("comparison_basis"):
+            lines.extend([f"- 对照依据：{review['comparison_basis']}", ""])
         for finding in review["findings"]:
             lines.extend([f"#### {finding['id']}：{finding['severity']}／{finding['status']}", "",
                           f"- 位置：{finding['location']}",
                           f"- 状态：{', '.join(finding['state_ids']) or '整体'}",
                           f"- 观察：{finding['observation']}", f"- 处理：{finding['action']}"])
+            if "category" in finding:
+                lines.append(f"- 原因类别：{finding['category']}")
             if finding["status"] == "accepted":
                 lines.append(f"- 接受依据：{finding['acceptance_evidence']}")
             lines.append("")
@@ -423,6 +479,7 @@ AI_START = """# 给下一位AI的开工说明
 
 - 以已确认需求、业务规则、页面状态和验收例子为约束，保留原型的视觉层级、素材与交互；不要只凭截图猜规则或默认套通用模板。
 - 有visual.design_plan和visual.review时读取表现意图、必保留特征、方法及未完成发现。不要把简约自动加装饰，也不要把复杂方向简化成默认表单。reviewed只表示记录的复查已完成，不保证视觉效果或运行测试通过。
+- 有design_plan中的subject、core_action、structure_reason、references或rendering时，沿用对象与操作关系、参考迁移和渲染选择。参考不是实测证据；feasibility为not_run时先验证关键效果，不静默降低素材精度。交互和导出的实现必须分别核对。
 - 有visual.motion_plan时保留前后状态、对象连续性、时长曲线、中断与减少动效行为。实现方式可按目标环境调整，不能只复刻动画外观而丢失焦点、滚动和业务状态；截图不能证明动态表现。
 - 用ARTIFACT.json核对当前HTML字节版本；未绑定版本的旧证据只作参考，修改HTML后重新检查受影响项，不把旧证据直接重标为当前版本。
 - 用户最新明确的需求优先。原型、截图与设计记录若冲突，指出具体冲突并确认，不悄悄决定。未实现、未验证不等于没有要求。

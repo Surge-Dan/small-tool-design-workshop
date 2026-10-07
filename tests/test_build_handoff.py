@@ -264,6 +264,41 @@ class ExportTests(unittest.TestCase):
         self.assertIn("克制的价格层级", report)
         self.assertTrue(any("视觉复查仅静态" in n for n in notices))
 
+    def test_reference_decisions_and_rendering_survive_handoff(self):
+        plan = self.visual_plan()
+        plan.update(subject="菜品清单", core_action="修改预算并比较", structure_reason="总价旁提供修改",
+                    references=[{"kind": "user_image", "source": "用户价签图", "observation": "价格和单位相邻",
+                                 "application": "清单就地修改", "not_transferred": "品牌和平台分享壳",
+                                 "limits": "未验证参考交互"}],
+                    rendering={"method": "HTML/CSS", "reason": "文字与就地操作", "key_effect": "价签层级",
+                               "offline_strategy": "内嵌字体与样式", "export_strategy": "", "feasibility": "not_run",
+                               "evidence_ids": []})
+        self.spec["visual"]["design_plan"] = plan
+        self.spec["visual"]["review"] = self.visual_review()
+        self.spec["visual"]["review"]["comparison_basis"] = "确认价签的数字与单位关系"
+        directory, _, notices = self.build()
+        report = (directory / "HANDOFF.md").read_text(encoding="utf-8")
+        for value in ("清单就地修改", "品牌和平台分享壳", "内嵌字体与样式", "未验证参考交互",
+                      "确认价签的数字与单位关系", "修改预算并比较"):
+            self.assertIn(value, report)
+        self.assertTrue(any("可行性尚未实测" in value for value in notices))
+        exported = json.loads((directory / "design-spec.json").read_text(encoding="utf-8"))
+        self.assertEqual(exported["visual"]["design_plan"], plan)
+
+    def test_tested_rendering_requires_actual_operation_evidence(self):
+        plan = self.visual_plan()
+        plan["rendering"] = {"method": "Canvas", "reason": "图像处理", "key_effect": "字符渲染",
+                             "offline_strategy": "本地像素处理", "export_strategy": "PNG", "feasibility": "tested",
+                             "evidence_ids": ["E1"]}
+        self.spec["visual"]["design_plan"] = plan
+        with self.assertRaisesRegex(ValueError, "实际操作"):
+            self.build()
+        self.assertFalse((self.root / "交接包").exists())
+        self.spec["evidence"].append({"id": "run", "kind": "browser", "description": "本地处理并查看输出",
+                                      "state_ids": ["ready", "result"]})
+        plan["rendering"]["evidence_ids"] = ["run"]
+        self.build()
+
     def test_unresolved_major_cannot_be_marked_reviewed(self):
         review = self.visual_review()
         review["findings"] = [self.visual_finding()]
