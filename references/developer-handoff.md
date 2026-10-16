@@ -49,6 +49,8 @@ python scripts/build_handoff.py init --output <项目目录>/design-spec.json --
 
 设计参数从实际HTML／样式中提取并核对，不从预想方案推测。需求的验证级别可以为not_run，部分完成也可以交付，但要如实标明。确认状态不等于需求已实现，更不等于运行通过。
 
+新模板用`brief.confirmations`分别记录`product`、`delivery`、`visual`，每项包含`status`（draft／confirmed／delegated）和非空`evidence`。用户明确提供的产品要求可作为业务依据；“单HTML”是交付依据；“风格你来定”是视觉委托而非画面认可。此字段用于复用同一次对话，不要求新增三轮确认。导出时三项须已确认或委托，不能只修改总status绕过未定视觉。旧记录没有该字段时仍可导出，交接明确说明无法区分确认范围；不补造历史认可。
+
 ### 视觉计划与复查
 
 `visual.design_plan`新增可选字段，旧记录保持兼容：

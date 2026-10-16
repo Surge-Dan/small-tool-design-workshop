@@ -144,6 +144,15 @@ def validate(spec, root):
     strings(brief, "non_goals", "brief")
     require(type(brief.get("offline")) is bool, "brief.offline必须是布尔值")
     require(not strings(brief, "blocking_questions", "brief"), "仍有未解决的关键问题")
+    if "confirmations" in brief:
+        confirmations = brief["confirmations"]
+        require(isinstance(confirmations, dict), "brief.confirmations必须是对象")
+        for scope in ("product", "delivery", "visual"):
+            decision = confirmations.get(scope)
+            require(isinstance(decision, dict), f"brief.confirmations.{scope}必须是对象")
+            require(decision.get("status") in ("confirmed", "delegated"),
+                    f"{scope}范围仍未确认或委托；不能用其他范围的确认替代")
+            text_field(decision, "evidence", f"brief.confirmations.{scope}")
     pages = index(items(spec, "pages", "spec", True), "pages")
     all_states = []
     for page in pages.values():
@@ -361,11 +370,18 @@ def bullet(values):
 
 def handoff(spec):
     b = spec["brief"]
+    confirmations = b.get("confirmations")
+    scope_lines = ([f"- {label}范围：{confirmations[scope]['status']}；依据："
+                    f"{confirmations[scope]['evidence']}"
+                    for scope, label in (("product", "业务"), ("delivery", "交付"), ("visual", "视觉"))]
+                   if confirmations is not None else
+                   ["- 旧记录未区分业务、交付与视觉的确认范围；不能据此推定具体视觉已获认可。"])
     lines = [f"# {spec['title']}开发交接", "", "## 设计依据", "",
              f"- 版本：{spec.get('revision', '未标注')}",
              f"- 记录绑定的HTML SHA-256：{spec.get('prototype_sha256') or '未绑定'}",
              "- 实际导出文件及证据的版本清单见ARTIFACT.json；哈希一致不代表功能或视觉通过。",
              f"- 确认状态：{b['status']}；依据：{b['confirmation_evidence']}",
+             *scope_lines,
              f"- 用户：{b['target_user']}", f"- 场景：{b['scenario']}",
              f"- 目标：{b['goal']}", f"- 离线要求：{'是' if b['offline'] else '否'}",
              "", "### 明确不做", "", bullet(b["non_goals"]),

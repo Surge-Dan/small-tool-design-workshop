@@ -164,6 +164,45 @@ class ExportTests(unittest.TestCase):
                 self.assertFalse((self.root / "交接包").exists())
                 self.assertFalse((self.root / "交接包.zip").exists())
 
+    def confirmed_scopes(self):
+        return {scope: {"status": "confirmed", "evidence": f"用户明确提供{scope}要求"}
+                for scope in ("product", "delivery", "visual")}
+
+    def test_visual_delegation_is_preserved_in_handoff(self):
+        scopes = self.confirmed_scopes()
+        scopes["visual"] = {"status": "delegated", "evidence": "用户说风格你来定"}
+        self.spec["brief"]["confirmations"] = scopes
+        directory, _, _ = self.build()
+        handoff = (directory / "HANDOFF.md").read_text(encoding="utf-8")
+        self.assertIn("视觉范围：delegated；依据：用户说风格你来定", handoff)
+        self.assertIn("业务范围：confirmed", handoff)
+
+    def test_scopes_cannot_hide_unconfirmed_visual(self):
+        self.spec["brief"]["status"] = "confirmed"
+        self.spec["brief"]["confirmations"] = self.confirmed_scopes()
+        self.spec["brief"]["confirmations"]["visual"]["status"] = "draft"
+        with self.assertRaisesRegex(ValueError, "visual范围"):
+            self.build()
+        self.assertFalse((self.root / "交接包").exists())
+        self.assertFalse((self.root / "交接包.zip").exists())
+
+    def test_scope_records_require_complete_shape_and_evidence(self):
+        variants = [None, [], {}, self.confirmed_scopes(), self.confirmed_scopes()]
+        variants[3]["delivery"] = "confirmed"
+        variants[4]["visual"]["evidence"] = "  "
+        for scopes in variants:
+            with self.subTest(scopes=scopes):
+                self.spec["brief"]["confirmations"] = scopes
+                with self.assertRaises(ValueError):
+                    self.build()
+                self.assertFalse((self.root / "交接包").exists())
+
+    def test_legacy_record_exports_without_inventing_visual_approval(self):
+        directory, _, _ = self.build()
+        handoff = (directory / "HANDOFF.md").read_text(encoding="utf-8")
+        self.assertIn("旧记录未区分业务、交付与视觉", handoff)
+        self.assertNotIn("视觉范围：confirmed", handoff)
+
     def test_broken_references_duplicate_ids_and_verification_reject(self):
         variants = []
         broken = fixture()

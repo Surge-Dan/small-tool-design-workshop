@@ -6,6 +6,11 @@
   "brief": {
     "status": "draft",
     "confirmation_evidence": "",
+    "confirmations": {
+      "product": {"status": "draft", "evidence": ""},
+      "delivery": {"status": "draft", "evidence": ""},
+      "visual": {"status": "draft", "evidence": ""}
+    },
     "target_user": "",
     "scenario": "",
     "goal": "",
