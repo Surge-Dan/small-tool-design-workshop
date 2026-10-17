@@ -11,11 +11,45 @@
 
 **从需求确认到视觉与交互设计，完成可体验、可继续开发的小工具原型**
 
+<p>
+  <a href="#showcase">看看样例</a> ·
+  <a href="#quick-start">开始使用</a> ·
+  <a href="#install">安装 Skill</a> ·
+  <a href="#handoff">交给 AI 开发</a> ·
+  <a href="https://github.com/Surge-Dan/small-tool-design-workshop/issues">反馈想法</a>
+</p>
+
 </div>
 
 小工具设计工坊适合想验证产品、试一试玩法，或把设计交给AI继续开发的人。给它一个想法、一份需求、参考图或已有HTML，从用户要操作什么开始，逐步确定结构、画面和反馈，做成可体验的高保真原型。
 
 > 想法还没成形，可以先聊；方向确定以后，再把画面和交互认真做好。
+
+<a id="showcase"></a>
+
+## 先看看，它可以往哪些方向设计
+
+一份清单可以像记账簿，一个计时器可以像手边的小物件。不是给所有工具换同一套配色，而是让内容、操作和视觉一起成立。
+
+<table>
+  <tr>
+    <td width="33%" align="center"><a href="docs/showcase/packing.png"><img src="docs/showcase/packing.png" width="260" alt="行李清单：纸感账簿、数量分栏与勾选状态"></a><br><b>行李清单</b><br>纸感账簿 · 清单核对</td>
+    <td width="33%" align="center"><a href="docs/showcase/dinner.png"><img src="docs/showcase/dinner.png" width="260" alt="晚餐搭配：食物插画、预算与菜单"></a><br><b>晚餐搭配</b><br>食物插画 · 预算推荐</td>
+    <td width="33%" align="center"><a href="docs/showcase/outfit.png"><img src="docs/showcase/outfit.png" width="260" alt="通勤穿搭：服饰图像与搭配选择"></a><br><b>通勤穿搭</b><br>编辑式构图 · 搭配选择</td>
+  </tr>
+  <tr>
+    <td align="center"><a href="docs/showcase/focus.png"><img src="docs/showcase/focus.png" width="260" alt="专注计时：可触感的计时器物件"></a><br><b>专注计时</b><br>物件与材质 · 时间反馈</td>
+    <td align="center"><a href="docs/showcase/mood.png"><img src="docs/showcase/mood.png" width="260" alt="心情小笺：卡片预览、心情选择与记录"></a><br><b>心情小笺</b><br>轻量文具 · 卡片生成</td>
+    <td align="center"><a href="docs/showcase/split.png"><img src="docs/showcase/split.png" width="260" alt="聚餐分账：金额、人数与计算键盘"></a><br><b>聚餐分账</b><br>数字排版 · 就地计算</td>
+  </tr>
+  <tr>
+    <td align="center"><a href="docs/showcase/plants.png"><img src="docs/showcase/plants.png" width="260" alt="植物浇水：植物插画与浇水核对"></a><br><b>植物浇水</b><br>植物水彩 · 日常记录</td>
+    <td align="center"><a href="docs/showcase/reading.png"><img src="docs/showcase/reading.png" width="260" alt="阅读进度：书籍、页数与进度记录"></a><br><b>阅读进度</b><br>书籍与字形 · 进度记录</td>
+    <td align="center"><a href="docs/showcase/photo.png"><img src="docs/showcase/photo.png" width="260" alt="照片贴纸：画布、贴纸素材与编辑控件"></a><br><b>照片贴纸</b><br>画布编辑 · 素材组合</td>
+  </tr>
+</table>
+
+以上是借助内置 imagegen 生成的**静态视觉概念图**，用于展示设计方向，不是九款已上线产品，也不是运行或交互测试截图。点击可查看原图；[制作说明与提示词](docs/showcase/README.md)保留生成依据。实际原型仍需落实交互、资源与显示效果，不能用概念图代替代码交付。
 
 ## 它能帮你什么
 
@@ -27,6 +61,8 @@
 - **修改找得到原因**：分开检查画面、行为、动画和显示，保留认可的部分；交接时留下设计决定和实际参数。
 
 这些方法用于减少猜测和返工。最终效果仍需看实际产物和你的反馈，不靠自评分保证质量。
+
+<a id="quick-start"></a>
 
 ## 使用方式
 
@@ -51,15 +87,31 @@
 首页、配色和主流程保持不变。
 ```
 
+### 也可以，给它出一道具体的题
+
+```text
+做一个番茄钟，像一只桌上的计时器。打开就能计时，能暂停和结束，不要欢迎页。
+```
+
+```text
+做一个通勤穿搭工具，画面像服饰杂志，但操作要简单。选天气和场合，能换一套、返回修改。
+```
+
+```text
+我只想记住这本书读到了哪页。别做读书社区，也别先让我注册账号。
+```
+
+你可以只说要解决什么。布局、字体和素材由工坊提出具体建议；你已有完整设计时，它就沿着你的决定完成。
+
 ## 🧭制作流程
 
 流程随需求完整度调整，需要你决定的内容集中确认，具体细节由设计师打磨。
 
 1. **弄清任务**：使用场景、操作对象、输入与结果，补关键缺口，留下少量可观察的验收例子。
-2. **拆解参考**：优先看你提供的作品，记录哪些特征值得借鉴、如何用于这次设计。业务依据和视觉依据分开。
-3. **选定方向**：比较确有取舍的布局与操作方式；必要时用真实内容做关键画面或局部交互，给推荐和理由。
-4. **完成制作**：先做好核心片段，再扩展状态。字体、素材、材质和动画一起设计，关键效果先验证可行性。
-5. **检查交付**：打开实际原型，分别检查画面、操作、动画和显示；按原因修正，说明已实现、模拟和未验证范围。
+2. **拆解参考**：先判断画面用于操作、阅读、体验还是传播，再按缺口看结构、艺术和状态参考；不把工具操作页套成宣传封面。
+3. **形成视觉语法**：把构图密度、字形层级、控件轮廓、颜色职责、素材和关键行为落实成具体决定，不只确认一个风格词。
+4. **完成制作**：先做好关键片段，再扩展状态。列表、计算等可以直接做HTML小样；图像和材质主导时再用生图辅助，不强制增加审批。
+5. **对照交付**：把实际渲染与认可画面按相同内容、状态和视口比较，核对构图、字体、密度与素材，再检查核心操作和显示；说明已实现、模拟和未验证范围。
 
 只要玩法，就先讨论玩法；只改一个细节，就检查相关部分。完整方案或明确委托可以直接制作，简单工具不增加无关流程。
 
@@ -90,7 +142,7 @@
 
 完成后，对照参考特征和已认可画面复查。结构不清楚改结构，素材粗糙补素材，字形失衡调排版，动画没反馈改变化关系。渐变、粉色、卡片、英文或奶油底都不是自动缺陷，关键看是否适合内容、是否协调。
 
-详细方法见[视觉设计流程](references/visual-sop.md)、[视觉语言](references/visual-language.md)、[常见设计问题](references/anti-ai-slop.md)和[素材与渲染](references/visual-resources.md)。
+详细方法见[参考解构到原型还原](references/reference-to-prototype.md)、[视觉设计流程](references/visual-sop.md)、[视觉语言](references/visual-language.md)、[常见设计问题](references/anti-ai-slop.md)和[素材与渲染](references/visual-resources.md)。
 
 ## 动画与交互
 
@@ -117,6 +169,8 @@
 默认按移动端设计，以390×844为主要基准，同时检查窄屏和长内容。电脑打开也居中保持手机宽度；明确需要桌面版时再适配。离线要求在关闭缓存、禁用网络后首次打开检查，未测试的设备和环境会标明。
 
 需要持续记录时，可以按需求实现本机保存、历史回看和数据导出，并说明存储位置与备份方式。本机保存不包含跨设备同步。真实账号、支付、服务端数据库和生产API需要另行明确需求。
+
+<a id="handoff"></a>
 
 ## 📦开发参考包
 
@@ -146,7 +200,15 @@
 
 详细格式见[开发交接](references/developer-handoff.md)。
 
+<a id="install"></a>
+
 ## 安装方式
+
+把仓库地址交给支持 Skill 安装的 Agent 即可：
+
+```text
+帮我安装这个 Skill：https://github.com/Surge-Dan/small-tool-design-workshop
+```
 
 在Codex环境中，通过Skill安装器执行：
 
@@ -158,6 +220,8 @@ python "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-s
 ```
 
 安装后，在新任务中使用`$small-tool-design-workshop`，也可以直接描述需求，让Agent按任务匹配Skill。
+
+已经安装旧版时，让 Agent **更新现有 Skill**，而不是只确认安装目录存在；更新前保留你的本地定制。
 
 ## 项目结构
 
@@ -201,6 +265,8 @@ python scripts/build_handoff.py build --spec <项目目录>/design-spec.json --h
 
 动效参考[Google的设计方法](https://design.google/library/making-motion-meaningful)，关注对象关系和状态变化；复杂信息通过[渐进披露](https://www.nngroup.com/articles/progressive-disclosure/)按需展开。内部对照保留实际产物、操作成本和用户反馈，未验证前不宣称优于普通Agent。
 
+本页的快速入口与作品预览编排参考了[Hyperframes](https://github.com/heygen-com/hyperframes)的展示方式，示例图为本项目另行制作，没有复制其作品或品牌素材。
+
 ## 💬贡献与反馈
 
 欢迎提交[Issue](https://github.com/Surge-Dan/small-tool-design-workshop/issues)或[PullRequest](https://github.com/Surge-Dan/small-tool-design-workshop/pulls)。为了方便定位问题，请尽量提供：
@@ -212,3 +278,7 @@ python scripts/build_handoff.py build --spec <项目目录>/design-spec.json --h
 视觉或交互问题，欢迎附上截图或最小HTML文件。分享前请移除真实账号、APIKey、Cookie及其他个人敏感信息。
 
 如果它帮你把一个小想法做成了满意的原型，欢迎点一个⭐，让更多创作者发现它。
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Surge-Dan/small-tool-design-workshop&type=Date)](https://www.star-history.com/#Surge-Dan/small-tool-design-workshop&Date)
