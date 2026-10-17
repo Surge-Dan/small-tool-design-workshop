@@ -60,6 +60,35 @@ class ExportTests(unittest.TestCase):
         self.spec_path.write_text(json.dumps(self.spec, ensure_ascii=False), encoding="utf-8")
         return exporter.build(self.spec_path, self.html, self.root / name)
 
+    def test_asset_recipes_and_pending_work_survive_existing_handoff_fields(self):
+        self.html.write_text(
+            '<!doctype html><title>素材交接</title>'
+            '<svg id="asset-a01" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8"/></svg>',
+            encoding="utf-8")
+        recipe = "A01已内嵌：#asset-a01；20×20矢量；复用该SVG，不重生成；深色圆形，无文字"
+        pending = "A02待生成：透明PNG，384×320；相同轮廓风格的衣物插画，无背景无文字；先生成再嵌入"
+        self.spec["visual"]["assets"] = [{
+            "name": "A01", "source": "本测试原创SVG", "license": "本测试自有",
+            "usage": recipe, "embedded": True}]
+        self.spec["limitations"].append(pending)
+        self.spec["requirements"].append({
+            "id": "R2", "description": "A02插画尚待制作", "page_ids": ["input"],
+            "acceptance": "透明插画嵌入后保持清晰", "implementation": "planned",
+            "verification": "not_run", "evidence_ids": []})
+        directory, archive, _ = self.build()
+        record = json.loads((directory / "design-spec.json").read_text(encoding="utf-8"))
+        self.assertEqual(record["visual"]["assets"], self.spec["visual"]["assets"])
+        self.assertEqual(record["requirements"][-1]["implementation"], "planned")
+        self.assertIn(pending, record["limitations"])
+        with zipfile.ZipFile(archive) as bundle:
+            prefix = directory.name + "/"
+            handoff = bundle.read(prefix + "HANDOFF.md").decode("utf-8")
+            self.assertIn(recipe, handoff)
+            self.assertIn(pending, handoff)
+            self.assertIn("asset-a01", bundle.read(prefix + "prototype.html").decode("utf-8"))
+            self.assertFalse(any(name.startswith(prefix + "assets/") for name in bundle.namelist()))
+        self.assertEqual((directory / "prototype.html").read_bytes(), self.html.read_bytes())
+
     def test_unicode_bundle_and_zip_content(self):
         directory, archive, notices = self.build()
         self.assertEqual((directory / "prototype.html").read_bytes(), self.html.read_bytes())

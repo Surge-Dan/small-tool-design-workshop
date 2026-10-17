@@ -2,8 +2,8 @@
 name: small-tool-design-workshop
 description: >-
   Design visually distinctive small-tool prototypes from ideas, requirements,
-  references or HTML. Translate observed references into task-specific layouts,
-  assets and interactions, align direction through key screens when useful,
+  references or HTML. Recommend visual directions when users cannot name a style,
+  distill image references into task-specific layouts, assets and interactions,
   and deliver runnable HTML plus an AI development handoff when requested.
 ---
 
@@ -46,6 +46,10 @@ description: >-
 
 视觉简报用真实内容说明：第一眼看什么、文字疏密与字形气质、控件轮廓、插画角色、顶部和底部如何安排操作。说明推荐理由及最重要的取舍，不只问“喜欢什么风格”。用户没想法时给推荐，有完整视觉方案时直接落实；一次确认不变成逐项审批。
 
+用户说不清风格时，按[风格发现与索引](references/style-library.md)把用途和日常偏好翻译成具体建议：默认一个推荐，仅在有实质取舍时加一个备选。用本次内容解释“看起来怎样、操作怎样、为什么适合、代价是什么”，不展示整本风格菜单或要求用户学习术语。库内24种方向是起点，不是固定皮肤；已有方案不重选，不凭题材、性别或年龄猜审美，不为惊喜擅自增加功能。
+
+上传图片时，先实际查看，再按[图片风格迁移](references/image-style-transfer.md)提取构图、字形比例、颜色职责、材质与资产语法，融合当前任务。区分忠实还原与借风格做新设计；图片只显示标题列表时不臆测完整风格。要新设计图就交图，要可交互原型就做真实UI，不能互相冒充。
+
 视觉选择以看得懂为目标：
 
 - 风格模糊、参考冲突或用户难以想象时，用真实内容制作关键画面；核心交互未定时补一次操作及结果，让用户看和试。有两种实质不同的取舍才对照，保持内容与视口一致，差异体现结构、素材或行为，不只换色；给出推荐。
@@ -84,6 +88,8 @@ description: >-
 
 证据对应实际检查的HTML版本；文件变化后旧证据不能冒充当前验证。给AI交接时保留必须维持的设计特征、交互规则、资产许可和已有实际截图；不承诺生产服务或不存在的Figma源文件。
 
+有图像或复杂效果时，按[素材到开发的闭环](references/asset-to-code.md)区分代码层与素材层，给出实际文件／待生成项、生成方法和嵌入方式。先做代表性主素材再扩展，不让下一位AI从整张图凭空重画。普通交付附几句针对性的开发建议；仅有静态图时明确功能未实现，不强制JSON或ZIP。已有素材尽量复用，无素材需求不制造生图任务。
+
 ## 按需读取
 
 先读当前任务需要的一两个文件，出现具体缺口再补读，不全量加载：
@@ -91,6 +97,9 @@ description: >-
 | 当前缺口 | 参考 |
 | --- | --- |
 | 需求、短简报、视觉对照、模糊反馈 | [brief-and-review.md](references/brief-and-review.md) |
+| 用户不会描述风格、需要发现偏好 | [style-library.md](references/style-library.md)，再只读选中的家族 |
+| 上传参考图、复刻视觉语言、新图融合 | [image-style-transfer.md](references/image-style-transfer.md) |
+| 插画／材质还原、图片转代码、交接提示词 | [asset-to-code.md](references/asset-to-code.md) |
 | 设计命题、结构与主题推导 | [design-engine.md](references/design-engine.md) |
 | 新视觉方向、参考逆向拆解、小样到代码的还原 | [reference-to-prototype.md](references/reference-to-prototype.md) |
 | 高保真视觉执行与复查 | [visual-sop.md](references/visual-sop.md) |
