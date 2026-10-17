@@ -29,11 +29,11 @@
 
 ## 先看看，它可以往哪些方向设计
 
-一份清单可以像记账簿，一个计时器可以像手边的小物件。不是给所有工具换同一套配色，而是让内容、操作和视觉一起成立。
+清单可以用插画区分物品，计时器可以像手边的小物件。不是给所有工具换同一套配色，而是让内容、操作和视觉一起成立。
 
 <table>
   <tr>
-    <td width="33%" align="center"><a href="docs/showcase/packing.png"><img src="docs/showcase/packing.png" width="260" alt="行李清单：纸感账簿、数量分栏与勾选状态"></a><br><b>行李清单</b><br>纸感账簿 · 清单核对</td>
+    <td width="33%" align="center"><a href="docs/showcase/packing.png"><img src="docs/showcase/packing.png" width="260" alt="行李清单：鲜彩插画、分类区域与勾选状态"></a><br><b>行李清单</b><br>鲜彩插画 · 清单核对</td>
     <td width="33%" align="center"><a href="docs/showcase/dinner.png"><img src="docs/showcase/dinner.png" width="260" alt="晚餐搭配：食物插画、预算与菜单"></a><br><b>晚餐搭配</b><br>食物插画 · 预算推荐</td>
     <td width="33%" align="center"><a href="docs/showcase/outfit.png"><img src="docs/showcase/outfit.png" width="260" alt="通勤穿搭：服饰图像与搭配选择"></a><br><b>通勤穿搭</b><br>编辑式构图 · 搭配选择</td>
   </tr>
