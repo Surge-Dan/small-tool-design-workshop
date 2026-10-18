@@ -1,0 +1,39 @@
+{
+  "created_date": "2026-10-18",
+  "note": "静态交互概念，不是实际运行截图；不提供可运行HTML。",
+  "images": [
+    {
+      "file": "oracle-concept.png",
+      "title": "签外之意",
+      "kind": "static_interaction_concept",
+      "prompt": "Use case: ui-mockup. Create ONE exceptionally polished mobile small-tool screen, full bleed flat screenshot, portrait aspect 390:844, no phone bezel, no outer desktop or mockup props. Chinese app \"签外之意\", a playful paper-lot ritual for reflection, not factual fortune prediction. A tactile modern Chinese woodblock and lacquer design: warm ivory fiber paper background, cinnabar red print, dark walnut lacquer cylinder, delicately carved wood and real bamboo sticks. Not a purple mystical AI dashboard. Compact quiet app name at top left in beautiful Song-style Chinese serif, small bookmark control right. Below a compact segmented question selector with real Chinese \"工作\" \"关系\" \"自己\", 工作 selected. Main central object occupies middle 45%: refined red-brown lacquer cylinder with subtle carved mountain motif, slender bamboo lots, ONE selected bamboo stick and an unfurled narrow paper slip leaning beside cylinder, richly crafted editorial still life integrated into interface, not an illustration inside a rectangular card. On paper slip legible vertical Chinese \"第十二签\" and short larger \"缓一缓\", small woodcut cloud motif. Below object a fine red rule and small practical interpretation \"把问题缩小，先做一件能确定的事\". Bottom controls: quiet rounded outline button \"再摇一次\" and cinnabar rounded main action \"收好这张签\", proportionate to mobile touch. Tiny unobtrusive footer \"娱乐与自我启发，不预测命运\". Chinese text exact, sparse, readable, no extra poetry, no English, no marketing slogan, no giant hero heading, no sparkles, no stars, no generic card stacks, no watermark. Show an interesting believable interactive product in its drawn-lot revealed state. Craft and typography should feel museum-shop quality yet convenient, strong material detail with ample calm whitespace. All screen content fits.",
+      "tool": "built-in imagegen",
+      "transparent_background": false,
+      "source_output": "exec-d95810f0-2a08-4ebb-9bba-5866fce43028.png",
+      "implemented": false,
+      "runtime_verified": false
+    },
+    {
+      "file": "dream-concept.png",
+      "title": "梦境标本馆",
+      "kind": "static_interaction_concept",
+      "prompt": "Use case: ui-mockup. Produce ONE high-fidelity full-screen mobile creative tool interface, aspect ratio 390:844 tall portrait, no phone shell or desktop backdrop. Chinese app \"梦境标本馆\": a surreal collage editor for assembling remembered dream objects, not psychological diagnosis. Distinctive natural-history field notebook meets contemporary surreal editorial collage. Palette deep ultramarine blue, aged ivory paper, small rust orange accents; precise black ink line annotation and graceful Chinese type, no meaningless English. Compact app title at top left, small \"存档\" action top right. The main editable specimen canvas takes upper-middle half, deep blue uneven paper field framed subtly by offwhite notebook margins. Highly art-directed collage of a pale blue whale floating through an antique arched doorway, one brass key hanging below, fine engraved cloud fragments, one small orange moon. Crisp cut-paper edges and delicate etching texture, large controlled forms and negative space, not chaotic stickers. A subtle selection outline and a small rotation handle on the KEY show actual editing intent without turning the collage into a diagram. Small natural handwritten object tags \"鲸\" \"门\" \"钥匙\" near their subjects, no slogans. Beneath canvas a compact materials rail with three small image thumbnails matching the actual whale/door/key, Chinese labels \"物件\" \"场景\" \"感受\" as tool tabs, 物件 active. Show a short emotion control \"安静\" on left and \"不安\" on right with tactile dot slider between. At the bottom two compact controls for undo and rearrange \"撤销\" \"重新摆放\", and dark blue rounded main action \"保存标本\". Tiny quiet footer \"联想创作，不作诊断\". Keep text sparse and exact, no giant poetic headline, no top English eyebrow, no fake dashboard, no glassmorphism, no emoji, no neon, no generic pill-card grid, no photo watermark. Sophisticated composition and expressive original illustrative assets, usable mobile controls and realistic spacing, all content fits.",
+      "tool": "built-in imagegen",
+      "transparent_background": false,
+      "source_output": "exec-b813d698-04d7-4859-a65e-572fb5e6d708.png",
+      "implemented": false,
+      "runtime_verified": false
+    },
+    {
+      "file": "weather-concept.png",
+      "title": "情绪气象台",
+      "kind": "static_interaction_concept",
+      "prompt": "Use case: ui-mockup. ONE complete premium mobile playful tool interface screen portrait 390:844, flat full bleed screenshot, no phone bezel, no surrounding scene. Chinese app \"情绪气象台\", where a user composes an imaginary weather scene using physical-feeling controls; not real weather forecasts or medical emotion inference. Design an exquisite little offwhite enameled weather instrument, soft chalk grey, cool pale periwinkle sky, deep teal legible labels, restrained brushed brass details. Compact Chinese app name top left, a small history icon top right; absolutely no English eyebrow or philosophical slogan. Main focus large round observation window integrated in the instrument surface occupying middle 45%: finely rendered miniature atmospheric diorama of sculptural white clouds, fine rain strands and a sliver of warm sunlight over a tiny dark green horizon. Real depth and sensitive material rendering, not a cheap gradient orb, not plastic clay blobs. A subtle circular calibrated scale with restrained ticks around the window; off-center small readable scene status \"小雨转晴\". Below the window, three genuinely distinct tactile round rotary dials with fine calibrated arc indicators in a neat row, clearly labelled in Chinese \"云量\" \"风力\" \"雨量\", values \"65%\" \"2\" \"15%\". Appropriate finger-sized controls with no decorative useless gauges. Beneath them a slim editable strip \"今天的天气\" with a small pencil icon and four tiny palette dots for card theme. Rounded dark teal action \"保存天气卡\" near bottom, secondary understated \"重置\" nearby. Tiny footnote \"由你设定，不是真实天气\". Emphasize cohesive visual hierarchy, original product design, meticulous enamel edges and gentle shadows, restrained Chinese sans type, scarce text, no hero slogan, no card stacks, no neon, no stars, no watermark. All screen content visible and balanced, useful product controls, artful but credible.",
+      "tool": "built-in imagegen",
+      "transparent_background": false,
+      "source_output": "exec-974a9b49-cc4a-4bd9-ba7a-bbfb10fc05b2.png",
+      "implemented": false,
+      "runtime_verified": false
+    }
+  ]
+}
