@@ -31,7 +31,7 @@
 
 从一次计算、一条记录，到素材驱动的选择，再到多状态联动与图像编辑。下面按**操作与状态复杂度**递进展示，不是按装饰多少给设计分级。
 
-共15个案例：前两组展示9幅**静态视觉概念图**；第三组先看3款**可运行原型的实际浏览器截图**，再探索3个**趣味交互概念**。概念图说明设计方向，原型可以下载后操作，二者不混作实现证据。
+共15个图片案例：基础工具3张、视觉进阶6张、复杂交互与趣味探索6张。从日常实用到抽象表达，看看同一个设计流程能走向哪些不同的结果。
 
 ### 01 · 基础工具：先把一个动作做好
 
@@ -62,47 +62,26 @@
   </tr>
 </table>
 
-以上9幅由内置 imagegen 生成，仅展示视觉方向，不是已实现的产品或交互测试截图。[制作说明与提示词](docs/showcase/README.md)保留生成依据。
+以上9幅是内置 imagegen 生成的静态视觉概念图，仅展示视觉方向，不是已实现的产品或交互测试截图。[制作说明与提示词](docs/showcase/README.md)保留生成依据。
 
-### 03 · 复杂交互：让设计经得起操作
+### 03 · 复杂交互与趣味探索
 
-不止是好看的首屏。地图与时间轴联动、锁定单品后的差异对比、照片像素处理与导出，都落实为可以操作的独立HTML。
-
-#### 可运行案例
+路线与时间联动、组合编辑、照片处理，也可以延伸到抽签、梦境拼贴和情绪天气。六种不同的对象、素材与交互表达，放在一起看。
 
 <table>
   <tr>
-    <td width="33%" align="center"><a href="docs/showcase/roam-live.png"><img src="docs/showcase/roam-live.png" width="260" alt="半日漫游实际浏览器截图：纸雕地图、地点选择、路线与时间轴"></a><br><b>半日漫游</b><br>空间关系 · 路线与时间联动<br><a href="examples/advanced/roam.html?raw=1">下载 HTML</a></td>
-    <td width="33%" align="center"><a href="docs/showcase/wardrobe-live.png"><img src="docs/showcase/wardrobe-live.png" width="260" alt="随身衣橱实际浏览器截图：独立服装素材、搭配台与一周安排"></a><br><b>随身衣橱</b><br>锁定换搭 · 对比与一周安排<br><a href="examples/advanced/wardrobe.html?raw=1">下载 HTML</a></td>
-    <td width="33%" align="center"><a href="docs/showcase/darkroom-live.png"><img src="docs/showcase/darkroom-live.png" width="260" alt="口袋暗房实际浏览器截图：照片预览、色调与曝光调节、PNG导出"></a><br><b>口袋暗房</b><br>本地图像编辑 · 高清导出<br><a href="examples/advanced/darkroom.html?raw=1">下载 HTML</a></td>
+    <td width="33%" align="center"><a href="docs/showcase/roam-live.png"><img src="docs/showcase/roam-live.png" width="260" alt="半日漫游实际浏览器截图：纸雕地图、地点选择、路线与时间轴"></a><br><b>半日漫游</b><br>空间关系 · 路线与时间联动</td>
+    <td width="33%" align="center"><a href="docs/showcase/wardrobe-live.png"><img src="docs/showcase/wardrobe-live.png" width="260" alt="随身衣橱实际浏览器截图：独立服装素材、搭配台与一周安排"></a><br><b>随身衣橱</b><br>锁定换搭 · 对比与一周安排</td>
+    <td width="33%" align="center"><a href="docs/showcase/darkroom-live.png"><img src="docs/showcase/darkroom-live.png" width="260" alt="口袋暗房实际浏览器截图：照片预览、色调与曝光调节、PNG导出"></a><br><b>口袋暗房</b><br>本地图像编辑 · 高清导出</td>
   </tr>
-</table>
-
-这3张是实际390×844浏览器渲染，**不是生图界面**。下载HTML后用浏览器打开即可体验，图片与脚本已内嵌，无需构建或联网。
-
-- **半日漫游**：地点增删、停留时间、锁定排序、顺路优化、超时提示与撤销。地点、路程和地图连线均为演示，不是实际导航。
-- **随身衣橱**：12件服装素材、锁定换搭、前后差异对比、一周安排与使用次数。本地搭配规则，不是在线AI试穿。
-- **口袋暗房**：本地上传、双色映射、颗粒、曝光、裁切、装帧、撤销重做和长边1800px PNG导出。照片不上传，不是生成式修图。
-
-三款已在Edge中检查离线核心流程及320／390／1280宽度显示；未做手机真机、Safari或平台审核验收。参见[案例文件与验证说明](examples/advanced/README.md)。案例用于说明制作方法，不是安装后必须套用的模板；复杂也不意味着比简单更适合你的需求。
-
-#### 趣味交互概念 · 尚未开发
-
-工具也可以用来抽一张纸签、收集一个梦，或亲手调出今天的小天气。下面探索仪式、拼贴编辑与参数联动三种玩法，**仅为生成的静态设计图，不是浏览器截图，也不提供已实现的HTML下载**。
-
-<table>
   <tr>
-    <td width="33%" align="center"><a href="docs/showcase/oracle-concept.png"><img src="docs/showcase/oracle-concept.png" width="260" alt="签外之意交互概念图：朱砂纸签、漆木签筒与展签状态，未实现"></a><br><b>签外之意</b><br>选择困惑 · 摇签与展签<br>静态交互概念</td>
-    <td width="33%" align="center"><a href="docs/showcase/dream-concept.png"><img src="docs/showcase/dream-concept.png" width="260" alt="梦境标本馆交互概念图：超现实物件拼贴、素材选择与感受调节，未实现"></a><br><b>梦境标本馆</b><br>物件拼贴 · 组合与存档<br>静态交互概念</td>
-    <td width="33%" align="center"><a href="docs/showcase/weather-concept.png"><img src="docs/showcase/weather-concept.png" width="260" alt="情绪气象台交互概念图：天气观察窗、云量风力雨量旋钮，未实现"></a><br><b>情绪气象台</b><br>旋钮调节 · 天气卡表达<br>静态交互概念</td>
+    <td align="center"><a href="docs/showcase/oracle-concept.png"><img src="docs/showcase/oracle-concept.png" width="260" alt="签外之意交互概念图：朱砂纸签、漆木签筒与展签状态，未实现"></a><br><b>签外之意</b><br>选择困惑 · 摇签与展签</td>
+    <td align="center"><a href="docs/showcase/dream-concept.png"><img src="docs/showcase/dream-concept.png" width="260" alt="梦境标本馆交互概念图：超现实物件拼贴、素材选择与感受调节，未实现"></a><br><b>梦境标本馆</b><br>物件拼贴 · 组合与存档</td>
+    <td align="center"><a href="docs/showcase/weather-concept.png"><img src="docs/showcase/weather-concept.png" width="260" alt="情绪气象台交互概念图：天气观察窗、云量风力雨量旋钮，未实现"></a><br><b>情绪气象台</b><br>旋钮调节 · 天气卡表达</td>
   </tr>
 </table>
 
-- **签外之意**：拟议流程是选择困惑、摇签、展签、收藏，用朱砂、木刻与纸张建立仪式感。定位为娱乐与自我启发，不宣称预测命运。
-- **梦境标本馆**：拟议交互是选择梦中物件与场景、调整拼贴位置、记录感受并保存。是创作联想，不作心理诊断或科学解梦。
-- **情绪气象台**：拟议交互是调节云量、风力、雨量，让小天气随参数变化，再保存天气卡。由用户主动表达，不推断心理状态，也不是真实天气预报。
-
-若继续开发，签筒与纸签、拼贴物件、云层等应先制作成可复用素材；文字、选中态、旋钮、动作反馈与导出仍由真实代码实现，不能把整页图片加热区当成成品。[制作记录与提示词](docs/showcase/README.md#playful-concepts)保留生成依据。
+前三张是实际原型的浏览器截图，后三张是尚未开发的静态交互概念；本区仅作图片展示。占卜与梦境玩法用于娱乐、联想创作，不作命运预测或心理诊断；情绪天气由用户设定，不是真实预报。[图片来源与制作记录](docs/showcase/README.md)保留具体说明。
 
 ## 它能帮你什么
 
