@@ -1,0 +1,17 @@
+[
+  {
+    "file": "roam.html",
+    "bytes": 5062623,
+    "sha256": "f097ed024272ea45a940b5164b39d1c4ce07201fa08f5f6697f692942522684a"
+  },
+  {
+    "file": "wardrobe.html",
+    "bytes": 6629089,
+    "sha256": "db9226b79907639ebf2bb007881d141eb25923140415463664b64caa64a2fca1"
+  },
+  {
+    "file": "darkroom.html",
+    "bytes": 3806271,
+    "sha256": "0bb0b22c904711c0aa012e7d41a34c35c660b751980025b27597f24b4c461553"
+  }
+]

@@ -29,27 +29,60 @@
 
 ## 先看看，它可以往哪些方向设计
 
-清单可以用插画区分物品，计时器可以像手边的小物件。不是给所有工具换同一套配色，而是让内容、操作和视觉一起成立。
+从一次计算、一条记录，到素材驱动的选择，再到多状态联动与图像编辑。下面按**操作与状态复杂度**递进展示，不是按装饰多少给设计分级。
+
+前两组是9幅**静态视觉概念图**；第三组是3款**可运行原型的实际浏览器截图**。概念图说明设计方向，原型可以下载后操作，二者不混作实现证据。
+
+### 01 · 基础工具：先把一个动作做好
+
+计算、记录、选择。让数字、内容和主操作足够清楚，不需要先做一张宣传首页。
 
 <table>
   <tr>
-    <td width="33%" align="center"><a href="docs/showcase/packing.png"><img src="docs/showcase/packing.png" width="260" alt="行李清单：鲜彩插画、分类区域与勾选状态"></a><br><b>行李清单</b><br>鲜彩插画 · 清单核对</td>
-    <td width="33%" align="center"><a href="docs/showcase/dinner.png"><img src="docs/showcase/dinner.png" width="260" alt="晚餐搭配：食物插画、预算与菜单"></a><br><b>晚餐搭配</b><br>食物插画 · 预算推荐</td>
-    <td width="33%" align="center"><a href="docs/showcase/outfit.png"><img src="docs/showcase/outfit.png" width="260" alt="通勤穿搭：服饰图像与搭配选择"></a><br><b>通勤穿搭</b><br>编辑式构图 · 搭配选择</td>
-  </tr>
-  <tr>
-    <td align="center"><a href="docs/showcase/focus.png"><img src="docs/showcase/focus.png" width="260" alt="专注计时：可触感的计时器物件"></a><br><b>专注计时</b><br>物件与材质 · 时间反馈</td>
-    <td align="center"><a href="docs/showcase/mood.png"><img src="docs/showcase/mood.png" width="260" alt="心情小笺：卡片预览、心情选择与记录"></a><br><b>心情小笺</b><br>轻量文具 · 卡片生成</td>
-    <td align="center"><a href="docs/showcase/split.png"><img src="docs/showcase/split.png" width="260" alt="聚餐分账：金额、人数与计算键盘"></a><br><b>聚餐分账</b><br>数字排版 · 就地计算</td>
-  </tr>
-  <tr>
-    <td align="center"><a href="docs/showcase/plants.png"><img src="docs/showcase/plants.png" width="260" alt="植物浇水：植物插画与浇水核对"></a><br><b>植物浇水</b><br>植物水彩 · 日常记录</td>
-    <td align="center"><a href="docs/showcase/reading.png"><img src="docs/showcase/reading.png" width="260" alt="阅读进度：书籍、页数与进度记录"></a><br><b>阅读进度</b><br>书籍与字形 · 进度记录</td>
-    <td align="center"><a href="docs/showcase/photo.png"><img src="docs/showcase/photo.png" width="260" alt="照片贴纸：画布、贴纸素材与编辑控件"></a><br><b>照片贴纸</b><br>画布编辑 · 素材组合</td>
+    <td width="33%" align="center"><a href="docs/showcase/split.png"><img src="docs/showcase/split.png" width="260" alt="聚餐分账概念图：金额、人数与计算键盘"></a><br><b>聚餐分账</b><br>数字排版 · 就地计算</td>
+    <td width="33%" align="center"><a href="docs/showcase/reading.png"><img src="docs/showcase/reading.png" width="260" alt="阅读进度概念图：书籍、页数与记录入口"></a><br><b>阅读进度</b><br>内容层级 · 简单记录</td>
+    <td width="33%" align="center"><a href="docs/showcase/mood.png"><img src="docs/showcase/mood.png" width="260" alt="心情小笺概念图：心情选择与卡片预览"></a><br><b>心情小笺</b><br>轻量文具 · 卡片表达</td>
   </tr>
 </table>
 
-以上是借助内置 imagegen 生成的**静态视觉概念图**，用于展示设计方向，不是九款已上线产品，也不是运行或交互测试截图。点击可查看原图；[制作说明与提示词](docs/showcase/README.md)保留生成依据。实际原型仍需落实交互、资源与显示效果，不能用概念图代替代码交付。
+### 02 · 视觉进阶：让素材参与任务
+
+从物品辨认到场景选择，插画、摄影和材质不只负责装饰，还要帮助区分内容、组织信息和表达结果。
+
+<table>
+  <tr>
+    <td width="33%" align="center"><a href="docs/showcase/packing.png"><img src="docs/showcase/packing.png" width="260" alt="行李清单概念图：鲜彩插画、分类区域与勾选状态"></a><br><b>行李清单</b><br>鲜彩插画 · 物品辨认</td>
+    <td width="33%" align="center"><a href="docs/showcase/plants.png"><img src="docs/showcase/plants.png" width="260" alt="植物浇水概念图：植物水彩与待办状态"></a><br><b>植物浇水</b><br>植物水彩 · 分类核对</td>
+    <td width="33%" align="center"><a href="docs/showcase/focus.png"><img src="docs/showcase/focus.png" width="260" alt="专注计时概念图：可触感的计时器物件"></a><br><b>专注计时</b><br>物件材质 · 时间反馈</td>
+  </tr>
+  <tr>
+    <td align="center"><a href="docs/showcase/dinner.png"><img src="docs/showcase/dinner.png" width="260" alt="晚餐搭配概念图：食物图像、预算与菜单"></a><br><b>晚餐搭配</b><br>食物图像 · 预算与结果</td>
+    <td align="center"><a href="docs/showcase/outfit.png"><img src="docs/showcase/outfit.png" width="260" alt="通勤穿搭概念图：服饰图像与场景选择"></a><br><b>通勤穿搭</b><br>编辑式构图 · 搭配选择</td>
+    <td align="center"><a href="docs/showcase/photo.png"><img src="docs/showcase/photo.png" width="260" alt="照片贴纸概念图：画布、贴纸素材与编辑控件"></a><br><b>照片贴纸</b><br>画布编辑 · 素材组合</td>
+  </tr>
+</table>
+
+以上9幅由内置 imagegen 生成，仅展示视觉方向，不是已实现的产品或交互测试截图。[制作说明与提示词](docs/showcase/README.md)保留生成依据。
+
+### 03 · 复杂交互：让设计经得起操作
+
+不止是好看的首屏。地图与时间轴联动、锁定单品后的差异对比、照片像素处理与导出，都落实为可以操作的独立HTML。
+
+<table>
+  <tr>
+    <td width="33%" align="center"><a href="docs/showcase/roam-live.png"><img src="docs/showcase/roam-live.png" width="260" alt="半日漫游实际浏览器截图：纸雕地图、地点选择、路线与时间轴"></a><br><b>半日漫游</b><br>空间关系 · 路线与时间联动<br><a href="examples/advanced/roam.html?raw=1">下载 HTML</a></td>
+    <td width="33%" align="center"><a href="docs/showcase/wardrobe-live.png"><img src="docs/showcase/wardrobe-live.png" width="260" alt="随身衣橱实际浏览器截图：独立服装素材、搭配台与一周安排"></a><br><b>随身衣橱</b><br>锁定换搭 · 对比与一周安排<br><a href="examples/advanced/wardrobe.html?raw=1">下载 HTML</a></td>
+    <td width="33%" align="center"><a href="docs/showcase/darkroom-live.png"><img src="docs/showcase/darkroom-live.png" width="260" alt="口袋暗房实际浏览器截图：照片预览、色调与曝光调节、PNG导出"></a><br><b>口袋暗房</b><br>本地图像编辑 · 高清导出<br><a href="examples/advanced/darkroom.html?raw=1">下载 HTML</a></td>
+  </tr>
+</table>
+
+这3张是实际390×844浏览器渲染，**不是生图界面**。下载HTML后用浏览器打开即可体验，图片与脚本已内嵌，无需构建或联网。
+
+- **半日漫游**：地点增删、停留时间、锁定排序、顺路优化、超时提示与撤销。地点、路程和地图连线均为演示，不是实际导航。
+- **随身衣橱**：12件服装素材、锁定换搭、前后差异对比、一周安排与使用次数。本地搭配规则，不是在线AI试穿。
+- **口袋暗房**：本地上传、双色映射、颗粒、曝光、裁切、装帧、撤销重做和长边1800px PNG导出。照片不上传，不是生成式修图。
+
+三款已在Edge中检查离线核心流程及320／390／1280宽度显示；未做手机真机、Safari或平台审核验收。参见[案例文件与验证说明](examples/advanced/README.md)。案例用于说明制作方法，不是安装后必须套用的模板；复杂也不意味着比简单更适合你的需求。
 
 ## 它能帮你什么
 

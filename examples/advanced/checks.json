@@ -1,0 +1,32 @@
+[
+  {
+    "file": "roam.html",
+    "offline": true,
+    "viewports": [
+      320,
+      390,
+      1280
+    ],
+    "page_errors": []
+  },
+  {
+    "file": "wardrobe.html",
+    "offline": true,
+    "viewports": [
+      320,
+      390,
+      1280
+    ],
+    "page_errors": []
+  },
+  {
+    "file": "darkroom.html",
+    "offline": true,
+    "viewports": [
+      320,
+      390,
+      1280
+    ],
+    "page_errors": []
+  }
+]
