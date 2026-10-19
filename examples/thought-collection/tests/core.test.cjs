@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');const path=require('node:path');
+const file=path.join(__dirname,'../core.js');
+assert.ok(fs.existsSync(file),'Implement the thought data model before tests can pass');
+const C=require(file);
+let checks=0;function test(name,fn){fn();checks++;console.log('OK',name)}
+test('fresh collection is empty and valid',()=>{const s=C.fresh();assert.equal(s.notes.length,0);C.validate(s)});
+test('new note and wording preserve immutable original',()=>{const s=C.fresh(),id=C.create(s,' 最初的表述 ','blue','hold','');C.addVersion(s,id,'补充内容','addition');C.addVersion(s,id,'现在的表述','wording');const n=s.notes[0];assert.equal(n.versions[0].text,'最初的表述');assert.equal(n.versions.length,3);assert.equal(C.current(n).text,'现在的表述');C.validate(s)});
+test('invalid or blank inputs never add a note',()=>{const s=C.fresh();assert.throws(()=>C.create(s,'  ','blue','hold',''));assert.throws(()=>C.create(s,'有效','red','review','2026-02-30'));assert.equal(s.notes.length,0)});
+test('links are symmetric unique and never merge text',()=>{const s=C.demo(),a=s.notes[0].id,b=s.notes[1].id;s.links=[];C.relate(s,a,b,'一起再看');assert.equal(C.related(s,b)[0].note.id,a);assert.throws(()=>C.relate(s,b,a,'重复'));assert.throws(()=>C.relate(s,a,a,'自己'));C.unrelate(s,s.links[0].id);assert.equal(s.links.length,0);assert.equal(s.notes[0].versions[0].text,'这个项目到底要不要继续')});
+test('splitting is atomic and preserves original/source',()=>{const s=C.demo(),id=s.notes[0].id,before=JSON.stringify(s);assert.throws(()=>C.split(s,id,['有效','  ']));assert.equal(JSON.stringify(s),before);const ids=C.split(s,id,['先验证需求','再决定投入']);assert.equal(ids.length,2);assert.equal(s.notes.length,7);assert.equal(C.children(s,id).length,2);assert.equal(s.notes[0].versions[0].text,'这个项目到底要不要继续');C.validate(s)});
+test('trash and restore retain relationships; purge cleans references',()=>{const s=C.demo(),a=s.notes[0].id,b=s.notes[1].id;s.links=[];C.relate(s,a,b,'一起再看');C.archive(s,a,true);C.trash(s,a);assert.equal(C.related(s,b).length,0);C.restore(s,a);assert.equal(s.notes[0].lifecycle,'archived');assert.equal(C.related(s,b).length,1);const child=C.split(s,a,['一个子念头'])[0];C.trash(s,a);C.purge(s,a);assert.equal(s.links.length,0);assert.equal(s.notes.find(n=>n.id===child).parentId,null);assert.equal(s.notes.find(n=>n.id===child).sourceText,'这个项目到底要不要继续');C.validate(s)});
+test('reorder and plan changes are explicit',()=>{const s=C.demo(),id=s.notes[0].id;C.move(s,id,1);assert.equal(s.notes[1].id,id);C.setPlan(s,id,'review','2026-10-23');const n=s.notes[1];assert.equal(n.reviewAt,'2026-10-23');C.setPlan(s,id,'hold','');assert.equal(n.reviewAt,'');C.recolor(s,id,'mint');assert.equal(n.color,'mint');C.validate(s)});
+test('corrupted storage is rejected',()=>{for(const change of [s=>s.notes={},s=>s.links={},s=>s.notes.push(s.notes[0]),s=>s.notes[0].color='unknown',s=>s.notes[0].versions=[],s=>s.links.push({id:'bad',a:'missing',b:s.notes[0].id,reason:'x',at:new Date().toISOString()}),s=>s.notes[0].reviewAt='not a date']){const s=C.demo();change(s);assert.throws(()=>C.validate(s))}});
+console.log(`${checks} model checks passed`);

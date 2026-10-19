@@ -1,0 +1,31 @@
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.ThoughtCore=api})(globalThis,function(){
+'use strict';
+const colors=['blue','yellow','orange','lavender','mint'];
+const intents=['hold','review','explore'];let serial=0;
+const stamp=()=>new Date().toISOString();
+const uid=()=>typeof crypto!=='undefined'&&crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+(++serial)+'-'+Math.random().toString(36).slice(2);
+function need(ok,msg){if(!ok)throw new Error(msg)}
+function text(v,max=1000){need(typeof v==='string'&&v.trim().length>0,'请先写下一句话');need(v.trim().length<=max,`请控制在${max}字以内`);return v.trim()}
+function date(v){if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(v))return false;const d=new Date(v+'T12:00:00Z');return Number.isFinite(d.getTime())&&d.toISOString().slice(0,10)===v}
+function fresh(){return{schema:1,notes:[],links:[]}}
+function note(s,id){const n=s.notes.find(n=>n.id===id);need(n,'找不到这条念头');return n}
+function plan(intent,reviewAt){need(intents.includes(intent),'请选择处理方式');need(intent!=='review'||date(reviewAt),'请选择有效的回看日期');return intent==='review'?reviewAt:''}
+function create(s,value,color='blue',intent='hold',reviewAt='',origin=null){const body=text(value),day=plan(intent,reviewAt);need(colors.includes(color),'请选择一种颜色');const at=stamp(),id=uid();s.notes.push({id,color,intent,reviewAt:day,lifecycle:'active',deletedFrom:null,deletedAt:null,parentId:origin?origin.id:null,sourceText:origin?current(origin).text:'',createdAt:at,updatedAt:at,versions:[{id:uid(),at,type:'original',text:body}]});return id}
+function current(n){return n.versions.filter(v=>v.type!=='addition').at(-1)}
+function addVersion(s,id,value,type){need(['addition','wording'].includes(type),'未知的记录方式');const body=text(value),n=note(s,id);need(n.lifecycle!=='trash','先恢复这条念头');n.versions.push({id:uid(),at:stamp(),type,text:body});n.updatedAt=stamp()}
+function setPlan(s,id,intent,reviewAt){const day=plan(intent,reviewAt),n=note(s,id);n.intent=intent;n.reviewAt=day;n.updatedAt=stamp()}
+function recolor(s,id,color){need(colors.includes(color),'未知颜色');note(s,id).color=color}
+function relate(s,a,b,reason){const why=text(reason,100);need(a!==b,'不能关联自己');need(note(s,a).lifecycle!=='trash'&&note(s,b).lifecycle!=='trash','先恢复要关联的念头');need(!s.links.some(l=>(l.a===a&&l.b===b)||(l.a===b&&l.b===a)),'这两条已经有关联');s.links.push({id:uid(),a,b,reason:why,at:stamp()})}
+function unrelate(s,id){need(s.links.some(l=>l.id===id),'找不到这条关联');s.links=s.links.filter(l=>l.id!==id)}
+function related(s,id){return s.links.filter(l=>l.a===id||l.b===id).map(link=>({link,note:s.notes.find(n=>n.id===(link.a===id?link.b:link.a))})).filter(x=>x.note&&x.note.lifecycle!=='trash')}
+function children(s,id){return s.notes.filter(n=>n.parentId===id&&n.lifecycle!=='trash')}
+function split(s,id,values){need(Array.isArray(values)&&values.length>0&&values.length<=8,'请填写1至8条子念头');const bodies=values.map(v=>text(v)),parent=note(s,id);need(parent.lifecycle!=='trash','先恢复这条念头');return bodies.map(body=>create(s,body,parent.color,'hold','',parent))}
+function archive(s,id,yes){const n=note(s,id);need(n.lifecycle!=='trash','先恢复这条念头');n.lifecycle=yes?'archived':'active'}
+function trash(s,id){const n=note(s,id);need(n.lifecycle!=='trash','已经在最近删除中');n.deletedFrom=n.lifecycle;n.lifecycle='trash';n.deletedAt=stamp()}
+function restore(s,id){const n=note(s,id);need(n.lifecycle==='trash','这条念头不在最近删除中');n.lifecycle=n.deletedFrom||'active';n.deletedFrom=null;n.deletedAt=null}
+function purge(s,id){need(note(s,id).lifecycle==='trash','只能永久删除最近删除中的念头');s.notes=s.notes.filter(n=>n.id!==id);s.links=s.links.filter(l=>l.a!==id&&l.b!==id);s.notes.forEach(n=>{if(n.parentId===id)n.parentId=null})}
+function move(s,id,delta){need(delta===1||delta===-1,'未知移动方向');const i=s.notes.findIndex(n=>n.id===id);need(i>=0,'找不到这条念头');const life=s.notes[i].lifecycle;let j=i+delta;while(j>=0&&j<s.notes.length&&s.notes[j].lifecycle!==life)j+=delta;if(j>=0&&j<s.notes.length)[s.notes[i],s.notes[j]]=[s.notes[j],s.notes[i]]}
+function validate(s){need(s&&s.schema===1&&Array.isArray(s.notes)&&Array.isArray(s.links),'本机记录格式不正确');const ids=new Set(),vids=new Set(),lids=new Set(),pairs=new Set();for(const n of s.notes){need(n&&typeof n.id==='string'&&n.id&&!ids.has(n.id),'记录标识损坏');ids.add(n.id);need(colors.includes(n.color)&&intents.includes(n.intent)&&['active','archived','trash'].includes(n.lifecycle),'记录状态损坏');need(n.reviewAt===''||date(n.reviewAt),'回看日期损坏');need(n.intent!=='review'||date(n.reviewAt),'回看日期缺失');need(typeof n.createdAt==='string'&&Number.isFinite(Date.parse(n.createdAt))&&typeof n.updatedAt==='string'&&Number.isFinite(Date.parse(n.updatedAt)),'记录时间损坏');need(n.parentId===null||typeof n.parentId==='string','来源损坏');need(typeof n.sourceText==='string','来源文字损坏');need(Array.isArray(n.versions)&&n.versions.length>0&&n.versions[0].type==='original','原始表述缺失');need(n.lifecycle!=='trash'||['active','archived'].includes(n.deletedFrom),'删除前状态缺失');for(let i=0;i<n.versions.length;i++){const v=n.versions[i];need(v&&typeof v.id==='string'&&!vids.has(v.id),'版本标识损坏');vids.add(v.id);need((i===0?v.type==='original':['addition','wording'].includes(v.type)),'版本类型损坏');text(v.text);need(typeof v.at==='string'&&Number.isFinite(Date.parse(v.at)),'版本时间损坏')}}for(const n of s.notes)need(n.parentId===null||(ids.has(n.parentId)&&n.parentId!==n.id),'来源引用损坏');for(const l of s.links){need(l&&typeof l.id==='string'&&!lids.has(l.id)&&ids.has(l.a)&&ids.has(l.b)&&l.a!==l.b,'关联损坏');lids.add(l.id);const pair=[l.a,l.b].sort().join('|');need(!pairs.has(pair),'关联重复');pairs.add(pair);text(l.reason,100);need(Number.isFinite(Date.parse(l.at)),'关联时间损坏')}return s}
+function demo(){const s=fresh();const a=create(s,'这个项目到底要不要继续','blue','review','2026-10-23'),b=create(s,'那天应该再解释一下','yellow','review','2026-10-22');create(s,'有空的时候\n把画画捡回来','orange');create(s,'想换个地方住','lavender','explore');create(s,'最近总想起\n那趟没去的旅行','mint');addVersion(s,a,'也许可以先缩小范围，试做一周','addition');s.notes[0].createdAt=s.notes[0].versions[0].at='2026-10-19T06:20:00.000Z';s.notes[0].versions[1].at='2026-10-20T01:10:00.000Z';relate(s,a,b,'我想一起看');return s}
+return{colors,intents,fresh,demo,validate,create,current,addVersion,setPlan,recolor,relate,unrelate,related,children,split,archive,trash,restore,purge,move};
+});

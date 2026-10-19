@@ -1,0 +1,26 @@
+{
+  "browser": "Edge headless",
+  "offline": true,
+  "widths": [
+    320,
+    390,
+    1280
+  ],
+  "core_flows": [
+    "empty/demo isolation including private drafts",
+    "append/wording/compare",
+    "atomic split",
+    "explicit link reason",
+    "private PNG export",
+    "trash/undo",
+    "reload persistence",
+    "30 records/search",
+    "new and append storage-failure draft retention",
+    "two-window stale-write prevention",
+    "simultaneous submits serialized by Web Locks",
+    "700+700 character split-draft conflict recovery",
+    "quick menu preserves home route"
+  ],
+  "page_errors": [],
+  "device_tested": false
+}

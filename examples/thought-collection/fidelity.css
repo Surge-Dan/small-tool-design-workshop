@@ -1,0 +1,8 @@
+/* Optical adjustments against the two user-approved reference screens. */
+.papertext{text-wrap:balance}
+.tile:not(.wide) .papertext{max-width:7em}
+.current-text{max-width:8.5em;text-wrap:balance}
+.tile:after{content:'';position:absolute;top:18%;right:0;width:7%;height:69%;clip-path:polygon(0 0,100% 96%,0 100%);background:#0000000c;pointer-events:none}
+.note-menu{width:44px;height:44px;top:0;right:0}
+.banner{flex-wrap:wrap}
+.banner span{flex:1;min-width:170px}
